@@ -12,7 +12,7 @@ import ReportsView from './components/ReportsView'
 import AlertsView from './components/AlertsView'
 import DataExplorerView from './components/DataExplorerView'
 import PolicySimulatorView from './components/PolicySimulatorView'
-import LandingPage from './components/LandingPage'
+import CinematicLanding from './components/CinematicLanding'
 import { 
   LayoutDashboard, Map, Compass, Activity, Flame, Wind, 
   Tag, BarChart3, FileSpreadsheet, BellRing, Database,
@@ -61,7 +61,7 @@ export default function App() {
   }, [])
 
   if (!enteredDashboard) {
-    return <LandingPage onEnterDashboard={() => setEnteredDashboard(true)} />
+    return <CinematicLanding onEnterDashboard={() => setEnteredDashboard(true)} />
   }
 
   // Analytics tab group items
