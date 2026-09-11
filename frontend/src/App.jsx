@@ -108,19 +108,33 @@ export default function App() {
       {/* 1. HORIZONTAL TOP NAVIGATION BAR */}
       <header className="vayu-navbar sticky top-0 z-50 px-4 lg:px-6 py-2.5 flex items-center justify-between shadow-sm">
         
-        {/* Left Brand Logo */}
-        <div 
-          onClick={() => setActiveTab('Dashboard')}
-          className="flex items-center space-x-2.5 cursor-pointer flex-shrink-0 group"
-        >
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#5442ed] to-[#7b6bfa] flex items-center justify-center text-white shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-all">
-            <span className="text-base">🛰️</span>
+        {/* Left Brand Logo & Cinematic Story Switcher */}
+        <div className="flex items-center space-x-3 flex-shrink-0">
+          <div 
+            onClick={() => setEnteredDashboard(false)}
+            className="flex items-center space-x-2.5 cursor-pointer group"
+            title="Return to Cinematic Storytelling Platform"
+          >
+            <div className="w-8 h-8 rounded-lg bg-[#0B1016] border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(0,240,255,0.25)] group-hover:border-cyan-400 transition-all">
+              <span className="text-base">🛰️</span>
+            </div>
+            <div>
+              <h1 className="text-sm font-black tracking-wider uppercase text-slate-900 dark:text-white flex items-center gap-1.5 font-display">
+                VayuShetra
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+              </h1>
+              <span className="text-[8px] font-mono tracking-widest text-zinc-400 uppercase block -mt-0.5">
+                MISSION CONTROL
+              </span>
+            </div>
           </div>
-          <div>
-            <h1 className="text-base font-black tracking-tight text-slate-900 dark:text-white flex items-center">
-              VayuShetra
-            </h1>
-          </div>
+
+          <button
+            onClick={() => setEnteredDashboard(false)}
+            className="hidden sm:flex items-center space-x-1.5 text-[10px] font-mono px-2.5 py-1 rounded-md bg-[#0B1016] border border-white/10 hover:border-cyan-500/40 text-zinc-300 hover:text-cyan-400 transition-all ml-1"
+          >
+            <span>← STORY</span>
+          </button>
         </div>
 
         {/* Center Nav Links */}

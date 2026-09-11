@@ -1,4 +1,4 @@
-# VayuShetra: Atmospheric Intelligence & Hyperlocal Air Quality Management System
+ # VayuShetra: Atmospheric Intelligence & Hyperlocal Air Quality Management System
 ## Comprehensive Technical Solution & Architecture Document
 
 ---

@@ -8,20 +8,21 @@
    ------------------------------------------------------------- */
 
 :root {
-  --bg-color: #060913;
-  --text-color: #ffffff;
-  --text-muted: #8c9db5;
-  --panel-bg: #0c1222;
+  --bg-color: #05070A;
+  --text-color: #E8EEF2;
+  --text-muted: #7D8994;
+  --panel-bg: #0B1016;
   --panel-border: rgba(255, 255, 255, 0.08);
-  --card-sub-bg: #080c18;
-  --navbar-bg: #090e1b;
-  --input-bg: #080c18;
+  --card-sub-bg: #0E1520;
+  --navbar-bg: rgba(11, 16, 22, 0.88);
+  --input-bg: #0E1520;
   --input-border: rgba(255, 255, 255, 0.12);
-  --accent-purple: #5442ed;
-  --accent-purple-hover: #6554fa;
-  --btn-inactive-bg: #080c18;
+  --accent-purple: #00F0FF;
+  --accent-purple-hover: #38BDF8;
+  --btn-inactive-bg: #0E1520;
   --btn-inactive-border: rgba(255, 255, 255, 0.08);
-  --btn-inactive-text: #8c9db5;
+  --btn-inactive-text: #7D8994;
+  --cyan-accent: #00F0FF;
 }
 
 html.light {
@@ -31,14 +32,15 @@ html.light {
   --panel-bg: #ffffff;
   --panel-border: #cbd5e1;
   --card-sub-bg: #f8fafc;
-  --navbar-bg: #ffffff;
+  --navbar-bg: rgba(255, 255, 255, 0.9);
   --input-bg: #ffffff;
   --input-border: #cbd5e1;
-  --accent-purple: #5442ed;
-  --accent-purple-hover: #4333d6;
+  --accent-purple: #0284c7;
+  --accent-purple-hover: #0369a1;
   --btn-inactive-bg: #ffffff;
   --btn-inactive-border: #cbd5e1;
   --btn-inactive-text: #334155;
+  --cyan-accent: #0284c7;
 }
 
 /* Custom Scrollbars */
@@ -263,3 +265,98 @@ html.dark .app-workspace table tbody tr:hover {
     display: none !important;
   }
 }
+
+/* -------------------------------------------------------------
+   SCIENTIFIC MISSION CONTROL & AEROSPACE HUD UTILITIES
+   ------------------------------------------------------------- */
+.telemetry-mono {
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+  letter-spacing: -0.02em;
+}
+
+.hud-panel {
+  background: rgba(11, 16, 22, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hud-panel-glow {
+  box-shadow: 0 0 35px -5px rgba(0, 240, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.hud-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), transparent);
+  pointer-events: none;
+}
+
+.hud-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  background: rgba(0, 240, 255, 0.06);
+  color: #00F0FF;
+}
+
+.hud-tag-amber {
+  border-color: rgba(245, 158, 11, 0.3);
+  background: rgba(245, 158, 11, 0.08);
+  color: #F59E0B;
+}
+
+.hud-tag-red {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.08);
+  color: #EF4444;
+}
+
+.hud-tag-green {
+  border-color: rgba(74, 222, 128, 0.3);
+  background: rgba(74, 222, 128, 0.08);
+  color: #4ADE80;
+}
+
+/* Subtle Sci-Fi Grid Overlay */
+.sci-grid-bg {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}
+
+/* Subtle Scanline Effect */
+.scanline-effect {
+  position: relative;
+}
+.scanline-effect::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+/* Custom Scanning Crosshair Cursor for Desktop */
+@media (pointer: fine) {
+  body.sci-cursor-active {
+    cursor: default;
+  }
+}
+
