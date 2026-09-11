@@ -3,11 +3,25 @@ import { useStore } from '../store'
 import { 
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts'
-import { MapContainer, TileLayer, CircleMarker, Circle, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, CircleMarker, Circle, Popup, useMap } from 'react-leaflet'
 import { 
   Activity, Wind, Flame, CloudSnow, Sparkles, MapPin, 
   Compass, ShieldAlert, Radio, Sliders, TrendingUp, Cpu, Factory, Car, ShieldCheck
 } from 'lucide-react'
+import { FALLBACK_MAP_DATA } from '../data/fallbackGeoData'
+import SentinelHUDWidget from './3d/SentinelHUDWidget'
+
+// Resizer component to ensure Leaflet maps calibrate correctly on initial render
+function MapResizer() {
+  const map = useMap()
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      map.invalidateSize()
+    }, 250)
+    return () => clearTimeout(timer)
+  }, [map])
+  return null
+}
 
 // CPCB color & category helpers
 const getCpcbColorAndLabel = (aqi) => {
@@ -116,7 +130,8 @@ export default function DashboardView() {
   const distWind = focus.wind_speed || districtProf.wind
 
   const aqiInfo = getCpcbColorAndLabel(distAqi)
-  const districtMarkers = getDistrictMarkers(mapData?.cells || [])
+  const currentMapData = (mapData && mapData.cells && mapData.cells.length > 0) ? mapData : FALLBACK_MAP_DATA
+  const districtMarkers = getDistrictMarkers(currentMapData.cells || [])
   const sortedRegions = [...districtMarkers].sort((a, b) => b.aqi - a.aqi)
 
   // 7-Day Historical Trend Data for Selected District
@@ -148,37 +163,49 @@ export default function DashboardView() {
     <div className="space-y-6 animate-fadeIn">
       
       {/* 1. ATMOSPHERIC OVERVIEW HEADER & DISTRICT SELECTOR */}
-      <div className="glass-panel p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#5442ed] to-[#7b6bfa] flex items-center justify-center text-white text-xl shadow-md">
+      <div className="command-panel p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xl shadow-[0_0_20px_rgba(0,240,255,0.35)] flex-shrink-0">
             🛰️
           </div>
           <div>
-            <h1 className="text-xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-              Atmospheric Overview & Telemetry
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+              <span className="text-[10px] font-mono tracking-widest text-cyan-400 uppercase font-bold">
+                COMMAND CHAMBER // MISSION TELEMETRY
+              </span>
+            </div>
+            <h1 className="text-xl font-black tracking-tight text-white flex items-center gap-2">
+              Atmospheric Command Center
             </h1>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-              National Clean Air Programme (NCAP) • Comprehensive Spatial Multi-Pollutant Analytics
+            <p className="text-xs text-zinc-400 font-medium">
+              National Clean Air Programme (NCAP) • Continuous Spatial Multi-Pollutant Analytics
             </p>
           </div>
         </div>
 
-        {/* Interactive District Focus Selector */}
-        <div className="flex items-center space-x-3">
-          <span className="text-xs font-bold text-slate-700 dark:text-zinc-300 flex items-center gap-1.5">
-            <MapPin size={14} className="text-[#5442ed]" /> Focus District:
-          </span>
-          <select
-            value={selectedDistrict}
-            onChange={(e) => setSelectedDistrict(e.target.value)}
-            className="vayu-subcard px-3.5 py-2 text-xs font-bold outline-none cursor-pointer hover:border-indigo-500/40 transition-all min-w-[150px]"
-          >
-            {districtsList.map(d => (
-              <option key={d} value={d} className="bg-white text-slate-900 dark:bg-[#090e1b] dark:text-white">
-                {d}
-              </option>
-            ))}
-          </select>
+        {/* Right Header: 3D Sentinel AI Companion + Focus District Selector */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* 3D Sentinel AI Companion Widget */}
+          <SentinelHUDWidget aqi={distAqi} district={selectedDistrict} />
+
+          {/* Interactive District Focus Selector */}
+          <div className="flex items-center space-x-2 bg-[#060B13]/90 border border-cyan-500/25 rounded-2xl px-3.5 py-2 shadow-[0_0_15px_rgba(0,240,255,0.08)]">
+            <span className="text-xs font-bold text-zinc-300 flex items-center gap-1.5 font-mono">
+              <MapPin size={13} className="text-cyan-400" /> Focus:
+            </span>
+            <select
+              value={selectedDistrict}
+              onChange={(e) => setSelectedDistrict(e.target.value)}
+              className="bg-transparent text-xs font-bold font-mono text-cyan-300 outline-none cursor-pointer hover:text-white transition-all min-w-[130px]"
+            >
+              {districtsList.map(d => (
+                <option key={d} value={d} className="bg-[#060B13] text-white">
+                  {d}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -186,13 +213,13 @@ export default function DashboardView() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
         
         {/* Card 1: Regional AQI */}
-        <div className="glass-panel p-4 rounded-2xl flex flex-col justify-between h-[125px] border-l-4 border-l-[#5442ed]">
-          <div className="flex items-center space-x-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-            <Activity size={13} className="text-[#5442ed]" />
+        <div className="command-panel command-tilt-card command-accent-top p-4 rounded-2xl flex flex-col justify-between h-[130px] border-l-4 border-l-cyan-400">
+          <div className="flex items-center space-x-1.5 text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
+            <Activity size={13} className="text-cyan-400" />
             <span>Regional AQI</span>
           </div>
           <div>
-            <div className="text-3xl font-black text-[#5442ed] tracking-tight">
+            <div className="text-3xl font-black text-cyan-400 tracking-tight font-mono">
               {kpis.aqi}
             </div>
             <div className="flex items-center space-x-1.5 text-[11px] font-bold mt-0.5" style={{ color: getCpcbColorAndLabel(kpis.aqi).color }}>
@@ -203,80 +230,80 @@ export default function DashboardView() {
         </div>
 
         {/* Card 2: Surface PM2.5 */}
-        <div className="glass-panel p-4 rounded-2xl flex flex-col justify-between h-[125px] border-l-4 border-l-sky-500">
-          <div className="flex items-center space-x-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-            <CloudSnow size={13} className="text-sky-500" />
+        <div className="command-panel command-tilt-card command-accent-top p-4 rounded-2xl flex flex-col justify-between h-[130px] border-l-4 border-l-sky-400">
+          <div className="flex items-center space-x-1.5 text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
+            <CloudSnow size={13} className="text-sky-400" />
             <span>Surface PM2.5</span>
           </div>
           <div>
-            <div className="text-3xl font-black text-sky-500 tracking-tight">
+            <div className="text-3xl font-black text-sky-400 tracking-tight font-mono">
               {kpis.pm25 ? Number(kpis.pm25).toFixed(1) : "72.0"}
             </div>
-            <div className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 mt-0.5">
+            <div className="text-[11px] font-bold text-zinc-400 mt-0.5 font-mono">
               µg/m³
             </div>
           </div>
         </div>
 
         {/* Card 3: Columnar HCHO */}
-        <div className="glass-panel p-4 rounded-2xl flex flex-col justify-between h-[125px] border-l-4 border-l-emerald-500">
-          <div className="flex items-center space-x-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-            <Sparkles size={13} className="text-emerald-500" />
+        <div className="command-panel command-tilt-card command-accent-top p-4 rounded-2xl flex flex-col justify-between h-[130px] border-l-4 border-l-emerald-400">
+          <div className="flex items-center space-x-1.5 text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
+            <Sparkles size={13} className="text-emerald-400" />
             <span>HCHO Hotspots</span>
           </div>
           <div>
-            <div className="text-3xl font-black text-emerald-500 tracking-tight">
+            <div className="text-3xl font-black text-emerald-400 tracking-tight font-mono">
               {kpis.hcho || 4}
             </div>
-            <div className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 mt-0.5">
+            <div className="text-[10px] font-bold text-zinc-400 mt-0.5 font-mono">
               Active Clusters
             </div>
           </div>
         </div>
 
         {/* Card 4: NASA Active Fires */}
-        <div className="glass-panel p-4 rounded-2xl flex flex-col justify-between h-[125px] border-l-4 border-l-orange-500">
-          <div className="flex items-center space-x-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-            <Flame size={13} className="text-orange-500" />
+        <div className="command-panel command-tilt-card command-accent-top p-4 rounded-2xl flex flex-col justify-between h-[130px] border-l-4 border-l-orange-400">
+          <div className="flex items-center space-x-1.5 text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
+            <Flame size={13} className="text-orange-400" />
             <span>Active Fires</span>
           </div>
           <div>
-            <div className="text-3xl font-black text-orange-500 tracking-tight">
+            <div className="text-3xl font-black text-orange-400 tracking-tight font-mono">
               {kpis.fires || 12}
             </div>
-            <div className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 mt-0.5">
+            <div className="text-[11px] font-bold text-zinc-400 mt-0.5 font-mono">
               VIIRS Thermal Points
             </div>
           </div>
         </div>
 
         {/* Card 5: Wind Speed */}
-        <div className="glass-panel p-4 rounded-2xl flex flex-col justify-between h-[125px] border-l-4 border-l-indigo-500">
-          <div className="flex items-center space-x-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-            <Wind size={13} className="text-indigo-500" />
+        <div className="command-panel command-tilt-card command-accent-top p-4 rounded-2xl flex flex-col justify-between h-[130px] border-l-4 border-l-blue-400">
+          <div className="flex items-center space-x-1.5 text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
+            <Wind size={13} className="text-blue-400" />
             <span>Wind Speed</span>
           </div>
           <div>
-            <div className="text-3xl font-black text-indigo-500 tracking-tight">
+            <div className="text-3xl font-black text-blue-400 tracking-tight font-mono">
               {kpis.wind ? Number(kpis.wind).toFixed(1) : "14.5"}
             </div>
-            <div className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 mt-0.5">
+            <div className="text-[11px] font-bold text-zinc-400 mt-0.5 font-mono">
               km/h (NW Vector)
             </div>
           </div>
         </div>
 
         {/* Card 6: Transport Risk */}
-        <div className="glass-panel p-4 rounded-2xl flex flex-col justify-between h-[125px] border-l-4 border-l-purple-500">
-          <div className="flex items-center space-x-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-            <Compass size={13} className="text-purple-500" />
+        <div className="command-panel command-tilt-card command-accent-top p-4 rounded-2xl flex flex-col justify-between h-[130px] border-l-4 border-l-violet-400">
+          <div className="flex items-center space-x-1.5 text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
+            <Compass size={13} className="text-violet-400" />
             <span>Transport Influx</span>
           </div>
           <div>
-            <div className="text-2xl font-black text-purple-500 tracking-tight">
+            <div className="text-2xl font-black text-violet-400 tracking-tight font-mono">
               {distBlh < 600 ? "Inversion Trap" : "Moderate Dilution"}
             </div>
-            <div className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 mt-0.5">
+            <div className="text-[10px] font-bold text-zinc-400 mt-0.5 font-mono">
               BLH: {distBlh}m
             </div>
           </div>
@@ -285,21 +312,21 @@ export default function DashboardView() {
       </div>
 
       {/* 3. SELECTED DISTRICT DEEP DIAGNOSTIC PANEL (CONCENTRATIONS & CHEMICAL BREAKDOWN) */}
-      <div className="glass-panel p-6 rounded-2xl space-y-5 border-2 border-indigo-500/30">
+      <div className="command-panel p-6 rounded-2xl space-y-5 border border-cyan-500/25 shadow-[0_0_25px_rgba(0,0,0,0.5)]">
         
         {/* Title Bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--panel-border)] pb-3">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-white/[0.08] pb-3">
           <div>
-            <div className="text-[10px] font-black uppercase text-[#5442ed] tracking-wider flex items-center gap-1.5">
+            <div className="text-[10px] font-black uppercase text-cyan-400 tracking-wider flex items-center gap-1.5 font-mono">
               <MapPin size={13} /> LIVE TELEMETRY MATRIX • {selectedDistrict.toUpperCase()} ({selectedDate})
             </div>
-            <h2 className="text-xl font-black text-slate-900 dark:text-white mt-0.5">
-              {selectedDistrict} Detailed Multi-Pollutant Speciation
+            <h2 className="text-xl font-black text-white mt-0.5">
+              {selectedDistrict} Multi-Pollutant Speciation Diagnostics
             </h2>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className={`px-3 py-1 rounded-full text-xs font-black border ${aqiInfo.badge}`}>
+            <span className={`px-3 py-1 rounded-full text-xs font-black border font-mono ${aqiInfo.badge}`}>
               {distAqi} AQI • {aqiInfo.label.toUpperCase()}
             </span>
           </div>
@@ -308,63 +335,63 @@ export default function DashboardView() {
         {/* 10-SPECIES CONCENTRATION METRICS GRID */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           
-          <div className="vayu-subcard p-3 rounded-xl">
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold block">PM2.5 (Fine)</span>
-            <div className="text-xl font-black font-mono text-sky-500 mt-0.5">{Number(distPm25).toFixed(1)} <span className="text-[10px] text-zinc-500">µg/m³</span></div>
+          <div className="bg-[#060B13]/85 border border-white/[0.08] hover:border-cyan-500/40 transition-all p-3 rounded-xl">
+            <span className="text-[10px] text-zinc-400 font-bold block font-mono">PM2.5 (Fine)</span>
+            <div className="text-xl font-black font-mono text-cyan-400 mt-0.5">{Number(distPm25).toFixed(1)} <span className="text-[10px] text-zinc-500">µg/m³</span></div>
             <span className="text-[10px] text-zinc-400 block mt-0.5">{distPm25 <= 60 ? "✅ NAAQS Safe" : "⚠️ Exceeds 60"}</span>
           </div>
 
-          <div className="vayu-subcard p-3 rounded-xl">
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold block">PM10 (Coarse)</span>
-            <div className="text-xl font-black font-mono text-indigo-500 mt-0.5">{Number(distPm10).toFixed(1)} <span className="text-[10px] text-zinc-500">µg/m³</span></div>
+          <div className="bg-[#060B13]/85 border border-white/[0.08] hover:border-cyan-500/40 transition-all p-3 rounded-xl">
+            <span className="text-[10px] text-zinc-400 font-bold block font-mono">PM10 (Coarse)</span>
+            <div className="text-xl font-black font-mono text-sky-400 mt-0.5">{Number(distPm10).toFixed(1)} <span className="text-[10px] text-zinc-500">µg/m³</span></div>
             <span className="text-[10px] text-zinc-400 block mt-0.5">{distPm10 <= 100 ? "✅ NAAQS Safe" : "⚠️ Exceeds 100"}</span>
           </div>
 
-          <div className="vayu-subcard p-3 rounded-xl">
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold block">NO₂ Surface</span>
-            <div className="text-xl font-black font-mono text-purple-500 mt-0.5">{Number(distNo2).toFixed(1)} <span className="text-[10px] text-zinc-500">µg/m³</span></div>
+          <div className="bg-[#060B13]/85 border border-white/[0.08] hover:border-cyan-500/40 transition-all p-3 rounded-xl">
+            <span className="text-[10px] text-zinc-400 font-bold block font-mono">NO₂ Surface</span>
+            <div className="text-xl font-black font-mono text-violet-400 mt-0.5">{Number(distNo2).toFixed(1)} <span className="text-[10px] text-zinc-500">µg/m³</span></div>
             <span className="text-[10px] text-zinc-400 block mt-0.5">Vehicular Traffic</span>
           </div>
 
-          <div className="vayu-subcard p-3 rounded-xl">
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold block">SO₂ Surface</span>
-            <div className="text-xl font-black font-mono text-amber-500 mt-0.5">{Number(distSo2).toFixed(1)} <span className="text-[10px] text-zinc-500">µg/m³</span></div>
+          <div className="bg-[#060B13]/85 border border-white/[0.08] hover:border-cyan-500/40 transition-all p-3 rounded-xl">
+            <span className="text-[10px] text-zinc-400 font-bold block font-mono">SO₂ Surface</span>
+            <div className="text-xl font-black font-mono text-amber-400 mt-0.5">{Number(distSo2).toFixed(1)} <span className="text-[10px] text-zinc-500">µg/m³</span></div>
             <span className="text-[10px] text-zinc-400 block mt-0.5">Industrial Stacks</span>
           </div>
 
-          <div className="vayu-subcard p-3 rounded-xl">
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold block">CO Surface</span>
-            <div className="text-xl font-black font-mono text-orange-500 mt-0.5">{Number(distCo).toFixed(2)} <span className="text-[10px] text-zinc-500">mg/m³</span></div>
+          <div className="bg-[#060B13]/85 border border-white/[0.08] hover:border-cyan-500/40 transition-all p-3 rounded-xl">
+            <span className="text-[10px] text-zinc-400 font-bold block font-mono">CO Surface</span>
+            <div className="text-xl font-black font-mono text-orange-400 mt-0.5">{Number(distCo).toFixed(2)} <span className="text-[10px] text-zinc-500">mg/m³</span></div>
             <span className="text-[10px] text-zinc-400 block mt-0.5">Smoldering Influx</span>
           </div>
 
-          <div className="vayu-subcard p-3 rounded-xl">
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold block">Ozone (O₃)</span>
-            <div className="text-xl font-black font-mono text-teal-500 mt-0.5">{Number(distO3).toFixed(1)} <span className="text-[10px] text-zinc-500">µg/m³</span></div>
+          <div className="bg-[#060B13]/85 border border-white/[0.08] hover:border-cyan-500/40 transition-all p-3 rounded-xl">
+            <span className="text-[10px] text-zinc-400 font-bold block font-mono">Ozone (O₃)</span>
+            <div className="text-xl font-black font-mono text-teal-400 mt-0.5">{Number(distO3).toFixed(1)} <span className="text-[10px] text-zinc-500">µg/m³</span></div>
             <span className="text-[10px] text-zinc-400 block mt-0.5">Photochemical</span>
           </div>
 
-          <div className="vayu-subcard p-3 rounded-xl">
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold block">AOD (Aerosol)</span>
-            <div className="text-xl font-black font-mono text-cyan-500 mt-0.5">{Number(distAod).toFixed(2)}</div>
+          <div className="bg-[#060B13]/85 border border-white/[0.08] hover:border-cyan-500/40 transition-all p-3 rounded-xl">
+            <span className="text-[10px] text-zinc-400 font-bold block font-mono">AOD (Aerosol)</span>
+            <div className="text-xl font-black font-mono text-cyan-400 mt-0.5">{Number(distAod).toFixed(2)}</div>
             <span className="text-[10px] text-zinc-400 block mt-0.5">MODIS Terra & Aqua</span>
           </div>
 
-          <div className="vayu-subcard p-3 rounded-xl">
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold block">HCHO Column</span>
-            <div className="text-xl font-black font-mono text-emerald-500 mt-0.5">{Number(distHcho).toFixed(2)} <span className="text-[10px] text-zinc-500">10¹⁵</span></div>
+          <div className="bg-[#060B13]/85 border border-white/[0.08] hover:border-cyan-500/40 transition-all p-3 rounded-xl">
+            <span className="text-[10px] text-zinc-400 font-bold block font-mono">HCHO Column</span>
+            <div className="text-xl font-black font-mono text-emerald-400 mt-0.5">{Number(distHcho).toFixed(2)} <span className="text-[10px] text-zinc-500">10¹⁵</span></div>
             <span className="text-[10px] text-zinc-400 block mt-0.5">Sentinel-5P Gas</span>
           </div>
 
-          <div className="vayu-subcard p-3 rounded-xl">
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold block">Inversion BLH</span>
-            <div className="text-xl font-black font-mono text-violet-500 mt-0.5">{distBlh} <span className="text-[10px] text-zinc-500">m</span></div>
+          <div className="bg-[#060B13]/85 border border-white/[0.08] hover:border-cyan-500/40 transition-all p-3 rounded-xl">
+            <span className="text-[10px] text-zinc-400 font-bold block font-mono">Inversion BLH</span>
+            <div className="text-xl font-black font-mono text-purple-400 mt-0.5">{distBlh} <span className="text-[10px] text-zinc-500">m</span></div>
             <span className="text-[10px] text-zinc-400 block mt-0.5">{distBlh < 600 ? "⚠️ Inversion Lid" : "✅ Good Mixing"}</span>
           </div>
 
-          <div className="vayu-subcard p-3 rounded-xl">
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold block">Wind Speed</span>
-            <div className="text-xl font-black font-mono text-blue-500 mt-0.5">{Number(distWind).toFixed(1)} <span className="text-[10px] text-zinc-500">km/h</span></div>
+          <div className="bg-[#060B13]/85 border border-white/[0.08] hover:border-cyan-500/40 transition-all p-3 rounded-xl">
+            <span className="text-[10px] text-zinc-400 font-bold block font-mono">Wind Speed</span>
+            <div className="text-xl font-black font-mono text-blue-400 mt-0.5">{Number(distWind).toFixed(1)} <span className="text-[10px] text-zinc-500">km/h</span></div>
             <span className="text-[10px] text-zinc-400 block mt-0.5">NW Corridors</span>
           </div>
 
@@ -376,27 +403,27 @@ export default function DashboardView() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         
         {/* Left Chart (7 cols): 7-Day Historical Trend for Selected District */}
-        <div className="col-span-12 lg:col-span-7 glass-panel p-5 flex flex-col justify-between h-[380px]">
+        <div className="col-span-12 lg:col-span-7 command-panel p-5 flex flex-col justify-between h-[390px]">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
             <div>
-              <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <TrendingUp size={16} className="text-[#5442ed]" /> 7-Day Historical Trend ({selectedDistrict})
+              <h3 className="text-sm font-extrabold text-white flex items-center gap-1.5 font-mono uppercase">
+                <TrendingUp size={16} className="text-cyan-400" /> 7-Day Historical Trend ({selectedDistrict})
               </h3>
-              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">
-                Day-by-day progression leading up to {selectedDate}
+              <p className="text-[11px] text-zinc-400 font-medium">
+                Temporal progression leading up to {selectedDate}
               </p>
             </div>
 
             {/* Metric Toggle Tabs */}
-            <div className="flex items-center space-x-1 vayu-subcard p-1 text-[10px] font-bold">
+            <div className="flex items-center space-x-1 bg-[#060B13] border border-cyan-500/20 rounded-xl p-1 text-[10px] font-bold font-mono">
               {['aqi', 'pm25', 'pm10'].map(m => (
                 <button
                   key={m}
                   onClick={() => setActiveTrendMetric(m)}
-                  className={`px-2.5 py-1 rounded-md transition-all uppercase ${
+                  className={`px-2.5 py-1 rounded-lg transition-all uppercase ${
                     activeTrendMetric === m 
-                      ? 'bg-[#5442ed] text-white shadow-sm font-bold' 
-                      : 'text-zinc-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
+                      ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-sm font-bold' 
+                      : 'text-zinc-400 hover:text-white'
                   }`}
                 >
                   {m === 'aqi' ? 'AQI' : m === 'pm25' ? 'PM2.5' : 'PM10'}
@@ -410,28 +437,29 @@ export default function DashboardView() {
               <AreaChart data={trendChartData} margin={{ top: 10, right: 10, left: -20, bottom: 5 }}>
                 <defs>
                   <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={activeTrendMetric === 'aqi' ? '#5442ed' : activeTrendMetric === 'pm25' ? '#38bdf8' : '#a855f7'} stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor={activeTrendMetric === 'aqi' ? '#5442ed' : activeTrendMetric === 'pm25' ? '#38bdf8' : '#a855f7'} stopOpacity={0.0}/>
+                    <stop offset="5%" stopColor={activeTrendMetric === 'aqi' ? '#00f0ff' : activeTrendMetric === 'pm25' ? '#38bdf8' : '#8b5cf6'} stopOpacity={0.45}/>
+                    <stop offset="95%" stopColor={activeTrendMetric === 'aqi' ? '#00f0ff' : activeTrendMetric === 'pm25' ? '#38bdf8' : '#8b5cf6'} stopOpacity={0.0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#1e293b' : '#e2e8f0'} vertical={false} />
-                <XAxis dataKey="date" stroke={theme === 'dark' ? '#94a3b8' : '#64748b'} fontSize={11} fontWeight={600} />
-                <YAxis stroke={theme === 'dark' ? '#94a3b8' : '#64748b'} fontSize={11} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0, 240, 255, 0.08)" vertical={false} />
+                <XAxis dataKey="date" stroke="#94a3b8" fontSize={11} fontWeight={600} />
+                <YAxis stroke="#94a3b8" fontSize={11} />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: theme === 'dark' ? '#090d16' : '#ffffff', 
-                    borderColor: theme === 'dark' ? '#334155' : '#cbd5e1', 
-                    color: theme === 'dark' ? '#ffffff' : '#0f172a', 
+                    backgroundColor: 'rgba(6, 12, 20, 0.95)', 
+                    borderColor: 'rgba(0, 240, 255, 0.3)', 
+                    color: '#ffffff', 
                     borderRadius: '12px',
                     fontSize: '12px',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                    boxShadow: '0 8px 30px rgba(0, 240, 255, 0.2)'
                   }} 
                 />
                 <Area 
                   type="monotone" 
                   dataKey={activeTrendMetric === 'aqi' ? 'AQI' : activeTrendMetric === 'pm25' ? 'PM2.5' : 'PM10'} 
-                  stroke={activeTrendMetric === 'aqi' ? '#5442ed' : activeTrendMetric === 'pm25' ? '#38bdf8' : '#a855f7'} 
-                  strokeWidth={3} 
+                  stroke={activeTrendMetric === 'aqi' ? '#00f0ff' : activeTrendMetric === 'pm25' ? '#38bdf8' : '#8b5cf6'} 
+                  strokeWidth={2.5} 
                   fill="url(#trendGrad)" 
                 />
               </AreaChart>
@@ -440,13 +468,13 @@ export default function DashboardView() {
         </div>
 
         {/* Right Chart (5 cols): SHAP AI Feature Explainability */}
-        <div className="col-span-12 lg:col-span-5 glass-panel p-5 flex flex-col justify-between h-[380px]">
+        <div className="col-span-12 lg:col-span-5 command-panel p-5 flex flex-col justify-between h-[390px]">
           <div>
-            <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <Cpu size={16} className="text-indigo-500" /> AI Driver Attribution ({selectedDistrict})
+            <h3 className="text-sm font-extrabold text-white flex items-center gap-1.5 font-mono uppercase">
+              <Cpu size={16} className="text-cyan-400" /> AI Driver Attribution ({selectedDistrict})
             </h3>
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium mt-0.5">
-              Feature impact breakdown on today's AQI derived from tree explainer
+            <p className="text-[11px] text-zinc-400 font-medium mt-0.5">
+              Feature impact breakdown on today's AQI derived from gradient tree explainer
             </p>
           </div>
 
@@ -454,10 +482,10 @@ export default function DashboardView() {
             {shapData.map(item => (
               <div key={item.feature} className="space-y-1">
                 <div className="flex justify-between text-xs font-semibold">
-                  <span className="text-slate-700 dark:text-zinc-300">{item.feature}</span>
+                  <span className="text-zinc-300">{item.feature}</span>
                   <span className="font-mono font-bold" style={{ color: item.color }}>+{item.contribution}%</span>
                 </div>
-                <div className="w-full bg-slate-200 dark:bg-zinc-800 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-[#060B13] border border-white/[0.08] h-2 rounded-full overflow-hidden">
                   <div className="h-full rounded-full transition-all duration-500" style={{ width: `${item.contribution * 2}%`, backgroundColor: item.color }}></div>
                 </div>
               </div>
@@ -465,18 +493,18 @@ export default function DashboardView() {
           </div>
 
           {/* Chemical Mass Balance Pills */}
-          <div className="pt-2 border-t border-[var(--panel-border)] grid grid-cols-3 gap-2 text-center text-[10px]">
-            <div className="vayu-subcard p-1.5">
-              <span className="text-amber-500 font-bold block">🌾 Biomass</span>
-              <span className="font-mono font-extrabold">{cmb.biomass}%</span>
+          <div className="pt-2 border-t border-white/[0.08] grid grid-cols-3 gap-2 text-center text-[10px]">
+            <div className="bg-[#060B13]/85 border border-white/[0.08] p-1.5 rounded-xl">
+              <span className="text-amber-400 font-bold block">🌾 Biomass</span>
+              <span className="font-mono font-extrabold text-white">{cmb.biomass}%</span>
             </div>
-            <div className="vayu-subcard p-1.5">
-              <span className="text-sky-500 font-bold block">🚗 Traffic</span>
-              <span className="font-mono font-extrabold">{cmb.vehicular}%</span>
+            <div className="bg-[#060B13]/85 border border-white/[0.08] p-1.5 rounded-xl">
+              <span className="text-sky-400 font-bold block">🚗 Traffic</span>
+              <span className="font-mono font-extrabold text-white">{cmb.vehicular}%</span>
             </div>
-            <div className="vayu-subcard p-1.5">
-              <span className="text-purple-500 font-bold block">🏭 Industry</span>
-              <span className="font-mono font-extrabold">{cmb.industrial}%</span>
+            <div className="bg-[#060B13]/85 border border-white/[0.08] p-1.5 rounded-xl">
+              <span className="text-violet-400 font-bold block">🏭 Industry</span>
+              <span className="font-mono font-extrabold text-white">{cmb.industrial}%</span>
             </div>
           </div>
         </div>
@@ -486,26 +514,26 @@ export default function DashboardView() {
       {/* 5. MAIN SECTION: ATMOSPHERIC MAP & TOP AFFECTED REGIONS */}
       <div className="grid grid-cols-12 gap-5">
         
-        {/* Left Column (8 cols): Atmospheric Map Card */}
-        <div className="col-span-12 lg:col-span-8 glass-panel p-5 flex flex-col h-[520px]">
+        {/* Left Column (8 cols): Spatial Intelligence Surface / Map Card */}
+        <div className="col-span-12 lg:col-span-8 command-panel p-5 flex flex-col h-[530px]">
           
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center space-x-2">
-              <MapPin size={16} className="text-[#5442ed]" />
-              <h3 className="text-sm font-extrabold tracking-tight">
-                Regional Atmospheric Map
+              <MapPin size={16} className="text-cyan-400" />
+              <h3 className="text-sm font-extrabold tracking-tight text-white font-mono uppercase">
+                Spatial Intelligence Surface // 10km Inversion Grid
               </h3>
             </div>
 
-            <div className="flex items-center space-x-2 text-[11px] font-bold text-zinc-500 dark:text-zinc-400">
+            <div className="flex items-center space-x-2 text-[11px] font-bold text-zinc-400 font-mono">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Live 10km Inversion Grid</span>
+              <span className="text-cyan-300">Continuous Telemetry Active</span>
             </div>
           </div>
 
           {/* Leaflet Map Body (100% Watermark Free Tile Layer) */}
-          <div className="flex-1 rounded-xl overflow-hidden border border-[var(--panel-border)] relative z-10">
-            {mapData && (
+          <div className="flex-1 rounded-xl overflow-hidden border border-cyan-500/20 relative z-10 shadow-[0_0_25px_rgba(0,0,0,0.5)]">
+            {currentMapData && (
               <MapContainer 
                 center={[30.1, 75.8]} 
                 zoom={8} 
@@ -513,6 +541,7 @@ export default function DashboardView() {
                 zoomControl={false}
                 key={`${theme}`}
               >
+                <MapResizer />
                 <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   className={theme === 'dark' ? 'theme-map-dark-tiles' : ''}
@@ -558,7 +587,7 @@ export default function DashboardView() {
                             <div className="font-bold text-sm mt-1" style={{ color: colorInfo.color }}>
                               AQI: {marker.aqi} ({colorInfo.label})
                             </div>
-                            <div className="text-[10px] text-zinc-500 pt-1">
+                            <div className="text-[10px] text-zinc-500 pt-1 font-mono">
                               PM2.5: {marker.pm25.toFixed(1)} µg/m³
                             </div>
                           </div>
@@ -569,7 +598,7 @@ export default function DashboardView() {
                 })}
 
                 {/* Draw active fires */}
-                {mapData.fires && mapData.fires.map((fire, idx) => (
+                {(currentMapData.fires || []).map((fire, idx) => (
                   <CircleMarker
                     key={`fire-${idx}`}
                     center={[fire.latitude, fire.longitude]}
@@ -588,11 +617,11 @@ export default function DashboardView() {
         </div>
 
         {/* Right Column (4 cols): Top Affected Regions Card */}
-        <div className="col-span-12 lg:col-span-4 glass-panel p-5 flex flex-col justify-between h-[520px]">
+        <div className="col-span-12 lg:col-span-4 command-panel p-5 flex flex-col justify-between h-[530px]">
           <div>
             <div className="flex items-center space-x-2 mb-3">
-              <ShieldAlert size={16} className="text-[#5442ed]" />
-              <h3 className="text-sm font-extrabold tracking-tight">
+              <ShieldAlert size={16} className="text-cyan-400" />
+              <h3 className="text-sm font-extrabold tracking-tight text-white font-mono uppercase">
                 Top Affected Regions
               </h3>
             </div>
@@ -608,12 +637,12 @@ export default function DashboardView() {
                     onClick={() => setSelectedDistrict(region.district)}
                     className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all ${
                       isSelected 
-                        ? 'bg-[#5442ed] text-white shadow-md font-bold' 
-                        : 'vayu-subcard hover:border-indigo-500/40'
+                        ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg font-bold border border-cyan-400/40' 
+                        : 'bg-[#060B13]/80 border border-white/[0.06] hover:border-cyan-500/40 text-zinc-300'
                     }`}
                   >
                     <div className="flex items-center space-x-3">
-                      <span className={`text-xs font-mono font-bold ${isSelected ? 'text-white' : 'text-zinc-400'}`}>
+                      <span className={`text-xs font-mono font-bold ${isSelected ? 'text-white' : 'text-zinc-500'}`}>
                         {String(idx + 1).padStart(2, '0')}
                       </span>
                       <span className="text-xs font-extrabold">
@@ -640,8 +669,8 @@ export default function DashboardView() {
             </div>
           </div>
 
-          <div className="text-[10px] text-zinc-500 dark:text-zinc-400 font-semibold text-center border-t border-[var(--panel-border)] pt-2">
-            Click any region to load district parameters & graphs
+          <div className="text-[10px] text-zinc-400 font-mono font-semibold text-center border-t border-white/[0.08] pt-2">
+            Click any region to load district telemetry & graphs
           </div>
         </div>
 

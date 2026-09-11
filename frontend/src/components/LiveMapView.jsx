@@ -2,6 +2,19 @@ import React, { useState, useEffect } from 'react'
 import { useStore } from '../store'
 import { MapContainer, TileLayer, CircleMarker, Circle, Popup, Polyline, useMapEvents, useMap } from 'react-leaflet'
 import { MapPin, Navigation, Search, Activity, Flame, ShieldAlert, TrendingUp } from 'lucide-react'
+import { FALLBACK_MAP_DATA } from '../data/fallbackGeoData'
+
+// Helper component to trigger Leaflet size invalidation on render
+function MapResizer() {
+  const map = useMap()
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      map.invalidateSize()
+    }, 250)
+    return () => clearTimeout(timer)
+  }, [map])
+  return null
+}
 
 const getCpcbColorAndLabel = (aqi) => {
   if (aqi <= 50) return { color: "#10b981", label: "Good" }
@@ -200,33 +213,31 @@ export default function LiveMapView() {
     }
   }
 
-  if (!mapData) {
-    return (
-      <div className="flex items-center justify-center h-[50vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500"></div>
-        <span className="ml-3 text-slate-400">Loading Map Layer Observables...</span>
-      </div>
-    )
-  }
-
-  const districtMarkers = getDistrictMarkers(mapData.cells)
+  const currentMapData = mapData && mapData.cells && mapData.cells.length > 0 ? mapData : FALLBACK_MAP_DATA
+  const districtMarkers = getDistrictMarkers(currentMapData.cells)
   const hpColorInfo = hyperlocalDetails ? getCpcbColorAndLabel(hyperlocalDetails.aqi) : null
 
   return (
     <div className="h-[calc(100vh-140px)] flex flex-col space-y-4">
       {/* Controls Overlay Header */}
-      <div className="glass-panel rounded-2xl p-4 flex flex-col md:flex-row justify-between items-center z-10 gap-4">
+      <div className="command-panel p-4 flex flex-col md:flex-row justify-between items-center z-10 gap-4">
         <div>
-          <h2 className="text-base font-extrabold text-white tracking-tight">Geospatial GIS Atmospheric Overview</h2>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+            <span className="text-[10px] font-mono tracking-widest text-cyan-400 uppercase font-bold">
+              SPATIAL INTELLIGENCE SURFACE // GIS
+            </span>
+          </div>
+          <h2 className="text-base font-extrabold text-white tracking-tight mt-0.5">Geospatial GIS Atmospheric Overview</h2>
           <p className="text-xs text-zinc-400 font-medium">Continuous 10km satellite-inferred air quality grid with click-to-predict village resolution</p>
         </div>
         
         <div className="flex items-center gap-3">
-          <div className="flex items-center space-x-2 bg-[#060608] border border-white/[0.06] rounded-xl px-3 py-1.5 text-xs text-zinc-300 font-bold">
+          <div className="flex items-center space-x-2 bg-[#060B13] border border-cyan-500/30 rounded-xl px-3 py-1.5 text-xs text-zinc-300 font-bold shadow-[0_0_15px_rgba(0,240,255,0.12)]">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>Live Satellite Telemetry</span>
+            <span className="font-mono text-cyan-300">Live Satellite Telemetry</span>
           </div>
-          <div className="flex items-center space-x-2 bg-[#060608] border border-white/[0.06] rounded-xl px-3 py-1.5 text-xs text-indigo-400 font-bold">
+          <div className="flex items-center space-x-2 bg-[#060B13] border border-violet-500/30 rounded-xl px-3 py-1.5 text-xs text-violet-300 font-bold">
             <span>🛰️ Multi-Stream Fusion</span>
           </div>
         </div>
@@ -236,13 +247,14 @@ export default function LiveMapView() {
       <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0">
         
         {/* Left Map View */}
-        <div className="flex-1 rounded-xl overflow-hidden border border-slate-800/80 relative z-0 min-h-[350px]">
+        <div className="flex-1 rounded-2xl overflow-hidden border border-cyan-500/20 relative z-0 min-h-[420px] shadow-[0_0_30px_rgba(0,0,0,0.6)]">
           <MapContainer 
             center={[30.1, 75.8]} 
             zoom={8} 
             className="w-full h-full"
             key={`${theme}`}
           >
+            <MapResizer />
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               className={theme === 'dark' ? 'theme-map-dark-tiles' : ''}
@@ -375,7 +387,7 @@ export default function LiveMapView() {
             })}
 
             {/* Draw HCHO clusters */}
-            {layers.hotspots && mapData.hotspots && mapData.hotspots.map((hot, idx) => (
+            {layers.hotspots && currentMapData.hotspots && currentMapData.hotspots.map((hot, idx) => (
               <Circle
                 key={`live-hot-${idx}`}
                 center={[hot.latitude, hot.longitude]}
@@ -399,7 +411,7 @@ export default function LiveMapView() {
             ))}
 
             {/* Draw Active Fires */}
-            {layers.fires && mapData.fires && mapData.fires.map((fire, idx) => (
+            {layers.fires && currentMapData.fires && currentMapData.fires.map((fire, idx) => (
               <CircleMarker
                 key={`live-fire-${idx}`}
                 center={[fire.latitude, fire.longitude]}
@@ -423,7 +435,7 @@ export default function LiveMapView() {
             ))}
 
             {/* Draw Trajectories */}
-            {layers.plumes && mapData.plumes && mapData.plumes.map((plume, idx) => (
+            {layers.plumes && currentMapData.plumes && currentMapData.plumes.map((plume, idx) => (
               <Polyline
                 key={`live-plume-${idx}`}
                 positions={plume.path}

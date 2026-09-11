@@ -196,13 +196,18 @@ def get_db_engine():
         if db_url.startswith("postgres://"):
             db_url = db_url.replace("postgres://", "postgresql://", 1)
         logger.info(f"Connecting to Supabase PostgreSQL Database: {db_url.split('@')[-1] if '@' in db_url else 'Supabase'}")
-        engine = create_engine(db_url, pool_size=10, max_overflow=20, pool_pre_ping=True)
-    else:
-        os.makedirs("data", exist_ok=True)
-        sqlite_path = os.path.abspath("data/vayushetra.db")
-        logger.info(f"Using SQLite Relational Engine: {sqlite_path}")
-        engine = create_engine(f"sqlite:///{sqlite_path}", connect_args={"check_same_thread": False})
-        
+        try:
+            test_engine = create_engine(db_url, pool_size=5, max_overflow=5, pool_pre_ping=True)
+            with test_engine.connect() as conn:
+                pass
+            return test_engine
+        except Exception as e:
+            logger.warning(f"Could not connect to remote PostgreSQL database ({e}). Falling back gracefully to local SQLite.")
+            
+    os.makedirs("data", exist_ok=True)
+    sqlite_path = os.path.abspath("data/vayushetra.db")
+    logger.info(f"Using SQLite Relational Engine: {sqlite_path}")
+    engine = create_engine(f"sqlite:///{sqlite_path}", connect_args={"check_same_thread": False})
     return engine
 
 engine = get_db_engine()

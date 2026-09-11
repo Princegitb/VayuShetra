@@ -18,7 +18,7 @@ dist-ssr/
 *credentials*.json
 
 # Bulky Data Files (keep code lightweight, rebuild locally with grid_builder.py)
-data/
+/data/
 
 # Editor / System config
 .vscode/

@@ -8,21 +8,22 @@
    ------------------------------------------------------------- */
 
 :root {
-  --bg-color: #05070A;
+  --bg-color: #04070D;
   --text-color: #E8EEF2;
-  --text-muted: #7D8994;
-  --panel-bg: #0B1016;
-  --panel-border: rgba(255, 255, 255, 0.08);
-  --card-sub-bg: #0E1520;
-  --navbar-bg: rgba(11, 16, 22, 0.88);
-  --input-bg: #0E1520;
-  --input-border: rgba(255, 255, 255, 0.12);
+  --text-muted: #8292A2;
+  --panel-bg: rgba(6, 12, 20, 0.78);
+  --panel-border: rgba(0, 240, 255, 0.12);
+  --card-sub-bg: rgba(10, 18, 28, 0.85);
+  --navbar-bg: rgba(4, 7, 13, 0.82);
+  --input-bg: #070D16;
+  --input-border: rgba(0, 240, 255, 0.18);
   --accent-purple: #00F0FF;
   --accent-purple-hover: #38BDF8;
-  --btn-inactive-bg: #0E1520;
+  --btn-inactive-bg: #070D16;
   --btn-inactive-border: rgba(255, 255, 255, 0.08);
-  --btn-inactive-text: #7D8994;
+  --btn-inactive-text: #8292A2;
   --cyan-accent: #00F0FF;
+  --violet-accent: #8B5CF6;
 }
 
 html.light {
@@ -41,6 +42,7 @@ html.light {
   --btn-inactive-border: #cbd5e1;
   --btn-inactive-text: #334155;
   --cyan-accent: #0284c7;
+  --violet-accent: #7c3aed;
 }
 
 /* Custom Scrollbars */
@@ -410,4 +412,93 @@ html.lenis, html.lenis body {
 [data-lenis-prevent]::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 240, 255, 0.65);
 }
+
+/* ==============================================================
+   ATMOSPHERIC COMMAND CENTER // DESIGN SYSTEM EXTENSIONS
+   ============================================================== */
+
+/* Floating Command Module Glass Panels */
+.command-panel {
+  background: rgba(6, 12, 20, 0.82) !important;
+  border: 1px solid rgba(0, 240, 255, 0.14) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.45);
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 3D Scientific Instrument Tilt on Hover */
+.command-tilt-card {
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.command-tilt-card:hover {
+  transform: translateY(-3px) scale(1.008);
+  box-shadow: 0 12px 28px -6px rgba(0, 240, 255, 0.16), 0 0 15px rgba(0, 240, 255, 0.08);
+  border-color: rgba(0, 240, 255, 0.38) !important;
+}
+
+/* Luminous Accent Border Line */
+.command-accent-top {
+  position: relative;
+}
+
+.command-accent-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.85), transparent);
+  pointer-events: none;
+}
+
+/* Scientific Metric Grid Overlay */
+.atmospheric-grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(0, 240, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 240, 255, 0.025) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+/* Scan line animation for radar / telemetry modules */
+.radar-scan-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.radar-scan-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), transparent);
+  animation: radarScan 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes radarScan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(1000%); }
+}
+
+/* Leaflet Dark Tile Enhancements & Full Viewport Responsiveness */
+.leaflet-container {
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+  height: 100% !important;
+  width: 100% !important;
+  min-height: 280px;
+}
+
+html.dark .theme-map-dark-tiles {
+  filter: brightness(0.68) invert(1) contrast(2.4) hue-rotate(185deg) saturate(0.35) brightness(0.8);
+}
+
 

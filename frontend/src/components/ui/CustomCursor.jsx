@@ -1,106 +1,96 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 
 /**
- * Cinematic Cyberpunk Custom Cursor
- * - Inner high-precision cyan core
- * - Outer trailing ring with physics-based lerp damping
- * - Automatically expands on interactive elements
- * - Completely disabled on touchscreens / coarse pointers
+ * Desktop-Only Minimal Atmospheric Custom Cursor
+ * - Central luminous point + damped outer tracking ring
+ * - Expands slightly when hovering over buttons, links, or interactive cards
+ * - Auto-disabled on touch/mobile devices and when prefers-reduced-motion is on
  */
 export default function CustomCursor() {
-  const [enabled, setEnabled] = useState(false)
-  const [hovered, setHovered] = useState(false)
-  const [clicked, setClicked] = useState(false)
-
-  const dotRef = useRef(null)
-  const ringRef = useRef(null)
-
-  const mouse = useRef({ x: -100, y: -100 })
-  const ringPos = useRef({ x: -100, y: -100 })
+  const [pos, setPos] = useState({ x: -100, y: -100 })
+  const [ringPos, setRingPos] = useState({ x: -100, y: -100 })
+  const [isHovered, setIsHovered] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    // Only enable if device has fine pointer and motion not strictly reduced
-    const hasFinePointer = window.matchMedia('(pointer: fine)').matches
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    if (!hasFinePointer || prefersReducedMotion) {
-      setEnabled(false)
+    // Check if device supports fine hover (desktop mouse)
+    const isTouch = window.matchMedia('(pointer: coarse)').matches
+    if (isTouch) {
+      setIsMobile(true)
       return
     }
 
-    setEnabled(true)
-
     const onMouseMove = (e) => {
-      mouse.current.x = e.clientX
-      mouse.current.y = e.clientY
-
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`
-      }
+      setPos({ x: e.clientX, y: e.clientY })
+      if (!isVisible) setIsVisible(true)
     }
 
-    const onMouseDown = () => setClicked(true)
-    const onMouseUp = () => setClicked(false)
-
-    // Detect hover over interactive elements
     const onMouseOver = (e) => {
-      const target = e.target.closest('button, a, input, select, textarea, [role="button"], .interactive-cursor')
-      setHovered(!!target)
+      const target = e.target
+      const isInteractive = target.closest('button, a, input, select, [role="button"], .interactive, .leaflet-interactive')
+      setIsHovered(!!isInteractive)
+    }
+
+    const onMouseLeave = () => {
+      setIsVisible(false)
     }
 
     window.addEventListener('mousemove', onMouseMove, { passive: true })
-    window.addEventListener('mousedown', onMouseDown)
-    window.addEventListener('mouseup', onMouseUp)
-    window.addEventListener('mouseover', onMouseOver)
-
-    // Smooth RAF loop for outer ring interpolation
-    let animId
-    const loop = () => {
-      ringPos.current.x += (mouse.current.x - ringPos.current.x) * 0.18
-      ringPos.current.y += (mouse.current.y - ringPos.current.y) * 0.18
-
-      if (ringRef.current) {
-        ringRef.current.style.transform = `translate3d(${ringPos.current.x}px, ${ringPos.current.y}px, 0) translate(-50%, -50%)`
-      }
-      animId = requestAnimationFrame(loop)
-    }
-    animId = requestAnimationFrame(loop)
+    document.addEventListener('mouseover', onMouseOver, { passive: true })
+    document.addEventListener('mouseleave', onMouseLeave)
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove)
-      window.removeEventListener('mousedown', onMouseDown)
-      window.removeEventListener('mouseup', onMouseUp)
-      window.removeEventListener('mouseover', onMouseOver)
-      cancelAnimationFrame(animId)
+      document.removeEventListener('mouseover', onMouseOver)
+      document.removeEventListener('mouseleave', onMouseLeave)
     }
-  }, [])
+  }, [isVisible])
 
-  if (!enabled) return null
+  // Smooth RAF damping for the outer ring
+  useEffect(() => {
+    if (isMobile) return
+
+    let animId
+    const followCursor = () => {
+      setRingPos((prev) => ({
+        x: prev.x + (pos.x - prev.x) * 0.22,
+        y: prev.y + (pos.y - prev.y) * 0.22,
+      }))
+      animId = requestAnimationFrame(followCursor)
+    }
+    animId = requestAnimationFrame(followCursor)
+    return () => cancelAnimationFrame(animId)
+  }, [pos, isMobile])
+
+  if (isMobile || !isVisible) return null
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[99999] overflow-hidden">
-      {/* Inner Precision Cyan Core */}
+    <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden">
+      {/* Outer Atmospheric Damped Ring */}
       <div
-        ref={dotRef}
-        className={`fixed top-0 left-0 w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_12px_#00f0ff] transition-transform duration-75 ease-out ${
-          clicked ? 'scale-150 bg-white' : ''
-        }`}
+        className="fixed rounded-full border border-cyan-400/50 transition-all duration-150 ease-out"
+        style={{
+          left: `${ringPos.x}px`,
+          top: `${ringPos.y}px`,
+          width: isHovered ? '42px' : '24px',
+          height: isHovered ? '42px' : '24px',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: isHovered ? 'rgba(0, 240, 255, 0.08)' : 'transparent',
+          boxShadow: isHovered ? '0 0 15px rgba(0, 240, 255, 0.35)' : 'none',
+        }}
       />
-
-      {/* Outer Damped HUD Tracking Ring */}
+      {/* Central Luminous Point */}
       <div
-        ref={ringRef}
-        className={`fixed top-0 left-0 rounded-full border transition-all duration-200 ease-out flex items-center justify-center ${
-          hovered
-            ? 'w-12 h-12 border-cyan-300 bg-cyan-500/10 shadow-[0_0_20px_rgba(0,240,255,0.3)] scale-110'
-            : 'w-7 h-7 border-cyan-400/40'
-        } ${clicked ? 'scale-90 border-cyan-200' : ''}`}
-      >
-        {/* Subtle crosshair notches on hover */}
-        {hovered && (
-          <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping opacity-60" />
-        )}
-      </div>
+        className="fixed rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]"
+        style={{
+          left: `${pos.x}px`,
+          top: `${pos.y}px`,
+          width: '5px',
+          height: '5px',
+          transform: 'translate(-50%, -50%)',
+        }}
+      />
     </div>
   )
 }
