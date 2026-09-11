@@ -70,6 +70,10 @@ export default function VayushetraScene({ dashboardData }) {
         {/* Electric Cyan Rim Light */}
         <directionalLight position={[-5, 2, -1]} intensity={2.8} color="#00f0ff" />
         
+        {/* Front Key Light for Robot Face & Vibrant Paint */}
+        <directionalLight position={[3, 3, 5]} intensity={2.4} color="#ffffff" />
+        <pointLight position={[isMobile ? 0 : 2.0, 1.0, 3.5]} intensity={2.2} color="#ffffff" distance={8} />
+
         {/* Atmospheric Blue Backlight */}
         <pointLight position={[0, -2, -3]} intensity={2.0} color="#0070f3" distance={8} />
 
@@ -78,7 +82,14 @@ export default function VayushetraScene({ dashboardData }) {
 
         {/* Sentinel Robot (Positioned on the right on desktop, center on mobile, scaled elegantly) */}
         <group position={[isMobile ? 0 : 1.9, isMobile ? 0.1 : 0, 0]} scale={[0.95, 0.95, 0.95]}>
-          <Robot mousePos={mousePos} isMobile={isMobile} />
+          <React.Suspense fallback={
+            <mesh position={[0, 0, 0]}>
+              <sphereGeometry args={[0.5, 16, 16]} />
+              <meshBasicMaterial color="#00f0ff" wireframe transparent opacity={0.25} />
+            </mesh>
+          }>
+            <Robot mousePos={mousePos} isMobile={isMobile} />
+          </React.Suspense>
         </group>
 
         {/* Air Particulate Stream (Permeating the entire scene volume) */}

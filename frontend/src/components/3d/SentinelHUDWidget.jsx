@@ -53,7 +53,9 @@ export default function SentinelHUDWidget({ aqi = 142, district = 'Ambala' }) {
           <pointLight position={[-2, -1, 1]} intensity={0.8} color="#8b5cf6" />
           
           <group scale={0.72} position={[0, -0.05, 0]}>
-            <Robot mousePos={mousePos} isMobile={false} />
+            <React.Suspense fallback={null}>
+              <Robot mousePos={mousePos} isMobile={false} />
+            </React.Suspense>
           </group>
         </Canvas>
         
