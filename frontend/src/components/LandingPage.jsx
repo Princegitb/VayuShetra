@@ -5,7 +5,7 @@ import {
   Compass, Sparkles, Activity, Layers, Terminal, ChevronRight, 
   Info, AlertTriangle, CheckCircle2, RefreshCw, Radio, Search, 
   MapPin, Eye, Zap, BarChart3, TrendingUp, Sliders, Play, Pause,
-  Share2, ShieldCheck, HelpCircle, X
+  Share2, ShieldCheck, HelpCircle, X, ShieldAlert
 } from 'lucide-react'
 
 // ============================================================================
@@ -21,13 +21,22 @@ const AtmosphericGeospatialCanvas = ({ activeLayer = 'AQI', activeHotspot = null
     if (!canvas) return
     const ctx = canvas.getContext('2d')
 
-    let width = (canvas.width = canvas.parentElement.clientWidth)
-    let height = (canvas.height = canvas.parentElement.clientHeight)
+    const getParentDims = () => {
+      const parent = canvas?.parentElement
+      return {
+        w: parent?.clientWidth || window.innerWidth || 1200,
+        h: parent?.clientHeight || window.innerHeight || 800
+      }
+    }
+    const initialDims = getParentDims()
+    let width = (canvas.width = initialDims.w)
+    let height = (canvas.height = initialDims.h)
 
     const handleResize = () => {
-      if (!canvas || !canvas.parentElement) return
-      width = canvas.width = canvas.parentElement.clientWidth
-      height = canvas.height = canvas.parentElement.clientHeight
+      if (!canvas) return
+      const dims = getParentDims()
+      width = canvas.width = dims.w
+      height = canvas.height = dims.h
     }
     window.addEventListener('resize', handleResize)
 
@@ -187,8 +196,6 @@ export default function LandingPage({ onEnterDashboard }) {
     }
   ])
   const [aiLoading, setAiLoading] = useState(false)
-  const [bootSequence, setBootSequence] = useState(true)
-
   const mapSectionRef = useRef(null)
   const pipelineRef = useRef(null)
   const intelligenceRef = useRef(null)
@@ -197,10 +204,6 @@ export default function LandingPage({ onEnterDashboard }) {
   useEffect(() => {
     fetchMapData()
     fetchDashboard()
-
-    // Short aerospace boot sequence (1.2s)
-    const timer = setTimeout(() => setBootSequence(false), 1200)
-    return () => clearTimeout(timer)
   }, [])
 
   // Ranked Hotspot Intelligence Database
@@ -352,22 +355,6 @@ export default function LandingPage({ onEnterDashboard }) {
   return (
     <div className="landing-platform-root min-h-screen bg-[#05070A] text-[#E8EEF2] font-sans overflow-x-hidden selection:bg-cyan-500/20 selection:text-cyan-300 relative">
       
-      {/* Short Aerospace Boot Splash */}
-      {bootSequence && (
-        <div className="fixed inset-0 z-50 bg-[#05070A] flex flex-col items-center justify-center space-y-4 animate-fadeOut">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400 text-2xl shadow-[0_0_30px_rgba(0,240,255,0.3)]">
-            🛰️
-          </div>
-          <div className="text-center space-y-1">
-            <h3 className="text-sm font-black tracking-widest uppercase text-white font-mono">
-              VAYUSHETRA // MISSION INITIALIZATION
-            </h3>
-            <p className="text-[11px] text-cyan-400 font-mono animate-pulse">
-              SYNCING TROPOMI SATELLITE & CPCB GROUND TELEMETRY...
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* Background Global Particle Grid */}
       <div className="fixed inset-0 sci-grid-bg pointer-events-none opacity-40 z-0"></div>
@@ -762,10 +749,10 @@ export default function LandingPage({ onEnterDashboard }) {
               <div className="flex justify-between items-center z-10 font-mono text-xs">
                 <div className="flex items-center space-x-2">
                   <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                  <span className="text-zinc-300 uppercase font-bold">ACTIVE LAYER: {layerMetadata[activeLayer].name}</span>
+                  <span className="text-zinc-300 uppercase font-bold">ACTIVE LAYER: {layerMetadata[activeLayer]?.name || activeLayer}</span>
                 </div>
                 <div className="text-[10px] text-zinc-400">
-                  NAAQS STANDARD: <strong className="text-cyan-400">{layerMetadata[activeLayer].benchmark}</strong>
+                  NAAQS STANDARD: <strong className="text-cyan-400">{layerMetadata[activeLayer]?.benchmark || '100 (Safe)'}</strong>
                 </div>
               </div>
 
@@ -818,15 +805,16 @@ export default function LandingPage({ onEnterDashboard }) {
 
                   {/* Active Hotspots on Map */}
                   {hotspotsList.map((h, i) => {
-                    const coords = [
+                    const defaultCoords = [
                       { cx: 260, cy: 175 }, // Delhi
                       { cx: 235, cy: 145 }, // Punjab
                       { cx: 250, cy: 160 }, // Haryana
                       { cx: 310, cy: 195 }, // Kanpur
                       { cx: 375, cy: 220 }  // Kolkata
-                    ][i]
+                    ]
+                    const coords = defaultCoords[i] || { cx: 200 + (i * 35) % 180, cy: 150 + (i * 25) % 120 }
 
-                    const isSelected = currentHotspot.id === h.id
+                    const isSelected = currentHotspot?.id === h.id
 
                     return (
                       <g 
@@ -888,7 +876,7 @@ export default function LandingPage({ onEnterDashboard }) {
                 </div>
 
                 <span className="text-[11px] text-zinc-400">
-                  {layerMetadata[activeLayer].desc}
+                  {layerMetadata[activeLayer]?.desc || 'Continuous satellite and ground telemetry measurement.'}
                 </span>
               </div>
 
@@ -920,7 +908,7 @@ export default function LandingPage({ onEnterDashboard }) {
                         : activeLayer === 'PM2.5' ? currentHotspot.pm25 
                         : Math.round(currentHotspot.pm25 * 1.6)}
                     </span>
-                    <span className="text-xs text-cyan-400 font-normal">{layerMetadata[activeLayer].unit}</span>
+                    <span className="text-xs text-cyan-400 font-normal">{layerMetadata[activeLayer]?.unit || 'AQI'}</span>
                   </div>
                   <div className="text-xs text-amber-400 font-mono font-bold">
                     {currentHotspot.trend}
