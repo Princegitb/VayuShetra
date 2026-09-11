@@ -501,4 +501,11 @@ html.dark .theme-map-dark-tiles {
   filter: brightness(0.68) invert(1) contrast(2.4) hue-rotate(185deg) saturate(0.35) brightness(0.8);
 }
 
+/* Custom Photo Cursor: Smoothly hide standard OS pointer when active */
+body.hide-default-cursor,
+body.hide-default-cursor * {
+  cursor: none !important;
+}
+
+
 

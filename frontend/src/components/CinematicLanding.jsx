@@ -146,8 +146,8 @@ export default function CinematicLanding({ onEnterDashboard }) {
   return (
     <div className="relative min-h-screen bg-[#05070A] text-[#E8EEF2] selection:bg-cyan-500/20 selection:text-cyan-300 font-sans overflow-x-hidden">
       
-      {/* Precision 3D Custom Cursor */}
-      <CustomCursor />
+      {/* Precision 3D Custom Cursor with Modi Photo */}
+      <CustomCursor imageSrc="/modi-cursor.png" size={48} />
 
       {/* ====================================================================
           TOP CYBERNETIC HUD NAVIGATION BAR
