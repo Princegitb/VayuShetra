@@ -47,8 +47,8 @@ export default function Robot({ mousePos = { x: 0, y: 0 }, isMobile = false }) {
     // Scale and center the FBX around origin based on its geometry bounds
     clone.scale.set(0.0016, 0.0016, 0.0016)
     clone.position.set(0, -1.18, 0)
-    // Orient 3/4 front-facing towards the user and camera with captivating angle
-    clone.rotation.y = Math.PI + 0.55
+    // Orient completely front-facing towards the user & camera (0 degree deviation)
+    clone.rotation.y = -Math.PI / 2
     return clone
   }, [fbx])
 
@@ -98,30 +98,52 @@ export default function Robot({ mousePos = { x: 0, y: 0 }, isMobile = false }) {
     const time = state.clock.getElapsedTime()
     const safeDelta = Math.min(delta, 0.1)
 
-    // A. Smooth anti-gravity levitation oscillation & interactive orientation
+    // A. Calculate target cursor positions
     let targetX = mousePos.x
     let targetY = mousePos.y
 
     if (isMobile) {
-      targetX = Math.sin(time * 0.6) * 0.4
-      targetY = Math.cos(time * 0.45) * 0.2
+      targetX = Math.sin(time * 0.6) * 0.35
+      targetY = Math.cos(time * 0.45) * 0.25
     }
 
+    // B. Smooth anti-gravity levitation oscillation & torso attitude
     if (rootRef.current) {
       // Gentle vertical floating
       rootRef.current.position.y = Math.sin(time * 1.6) * 0.07
       
-      // Dynamic yaw/pitch tracking user's cursor
-      const targetYaw = targetX * 0.38
-      const targetPitch = -targetY * 0.18
-      const targetRoll = -targetX * 0.08
+      // Responsive torso tilt towards cursor
+      const bodyYaw = THREE.MathUtils.clamp(targetX * 0.18, -0.22, 0.22)
+      const bodyPitch = THREE.MathUtils.clamp(-targetY * 0.14, -0.16, 0.16)
 
-      rootRef.current.rotation.y = THREE.MathUtils.damp(rootRef.current.rotation.y, targetYaw, 2.6, safeDelta)
-      rootRef.current.rotation.x = THREE.MathUtils.damp(rootRef.current.rotation.x, targetPitch, 2.6, safeDelta)
-      rootRef.current.rotation.z = THREE.MathUtils.damp(rootRef.current.rotation.z, targetRoll + Math.sin(time * 0.8) * 0.02, 2.0, safeDelta)
+      rootRef.current.rotation.y = THREE.MathUtils.damp(rootRef.current.rotation.y, bodyYaw, 2.5, safeDelta)
+      rootRef.current.rotation.x = THREE.MathUtils.damp(rootRef.current.rotation.x, bodyPitch, 2.5, safeDelta)
+      rootRef.current.rotation.z = THREE.MathUtils.damp(rootRef.current.rotation.z, -targetX * 0.05 + Math.sin(time * 0.8) * 0.02, 2.0, safeDelta)
     }
 
-    // B. Antenna / Ear Micro-Twitches (Cute robotic character gestures)
+    // C. Skeletal Head Tracking: UP / DOWN and LEFT / RIGHT with cursor!
+    if (bones.head) {
+      // Yaw: turns face left/right with cursor X
+      const headYaw = THREE.MathUtils.clamp(targetX * 0.58, -0.65, 0.65)
+      // Pitch: tilts face up/down with cursor Y (negative targetY nods UP towards high cursor)
+      const headPitch = THREE.MathUtils.clamp(-targetY * 0.52, -0.55, 0.55)
+      // Roll: subtle curious sideways head tilt
+      const headRoll = THREE.MathUtils.clamp(-targetX * 0.12, -0.15, 0.15)
+
+      bones.head.rotation.y = THREE.MathUtils.damp(bones.head.rotation.y, headYaw, 4.2, safeDelta)
+      bones.head.rotation.x = THREE.MathUtils.damp(bones.head.rotation.x, headPitch, 4.2, safeDelta)
+      bones.head.rotation.z = THREE.MathUtils.damp(bones.head.rotation.z, headRoll, 3.0, safeDelta)
+    }
+
+    // D. Spine responsive lean (gives natural fluid spine curvature)
+    if (bones.spine) {
+      const spineYaw = THREE.MathUtils.clamp(targetX * 0.18, -0.2, 0.2)
+      const spinePitch = THREE.MathUtils.clamp(-targetY * 0.15, -0.18, 0.18)
+      bones.spine.rotation.y = THREE.MathUtils.damp(bones.spine.rotation.y, spineYaw, 2.8, safeDelta)
+      bones.spine.rotation.x = THREE.MathUtils.damp(bones.spine.rotation.x, spinePitch, 2.8, safeDelta)
+    }
+
+    // E. Antenna / Ear Micro-Twitches (Cute robotic character gestures)
     if (bones.leftEar) {
       const earTwitch = Math.sin(time * 3.2) * 0.06 + (Math.sin(time * 6.5) > 0.9 ? 0.12 : 0)
       bones.leftEar.rotation.z = THREE.MathUtils.damp(bones.leftEar.rotation.z, earTwitch, 4.0, safeDelta)
@@ -131,7 +153,7 @@ export default function Robot({ mousePos = { x: 0, y: 0 }, isMobile = false }) {
       bones.rightEar.rotation.z = THREE.MathUtils.damp(bones.rightEar.rotation.z, earTwitch, 4.0, safeDelta)
     }
 
-    // C. Arms subtle organic breathing sway
+    // F. Arms subtle organic breathing sway
     if (bones.leftArm) {
       bones.leftArm.rotation.x = -2.74 + Math.sin(time * 1.5) * 0.04
     }

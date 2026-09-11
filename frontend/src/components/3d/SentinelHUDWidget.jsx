@@ -43,16 +43,17 @@ export default function SentinelHUDWidget({ aqi = 142, district = 'Ambala' }) {
       {/* 3D Sentinel Mini-Viewport */}
       <div className="w-14 h-14 relative flex-shrink-0 cursor-crosshair">
         <Canvas
-          camera={{ position: [0, 0.2, 2.5], fov: 42 }}
+          camera={{ position: [0, 0.25, 2.5], fov: 40 }}
           dpr={[1, 1.5]}
           gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
           style={{ width: '100%', height: '100%' }}
         >
-          <ambientLight intensity={0.9} />
-          <directionalLight position={[2, 3, 2]} intensity={1.5} color="#00f0ff" />
-          <pointLight position={[-2, -1, 1]} intensity={0.8} color="#8b5cf6" />
+          <ambientLight intensity={1.1} />
+          <directionalLight position={[0, 2, 4]} intensity={2.4} color="#ffffff" />
+          <directionalLight position={[-2, 1, 1]} intensity={1.5} color="#00f0ff" />
+          <pointLight position={[0, 0.5, 2]} intensity={1.6} color="#38bdf8" distance={5} />
           
-          <group scale={0.72} position={[0, -0.05, 0]}>
+          <group scale={0.75} position={[0, -0.15, 0]}>
             <React.Suspense fallback={null}>
               <Robot mousePos={mousePos} isMobile={false} />
             </React.Suspense>

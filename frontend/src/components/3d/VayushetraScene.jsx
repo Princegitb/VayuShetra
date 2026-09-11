@@ -71,8 +71,9 @@ export default function VayushetraScene({ dashboardData }) {
         <directionalLight position={[-5, 2, -1]} intensity={2.8} color="#00f0ff" />
         
         {/* Front Key Light for Robot Face & Vibrant Paint */}
-        <directionalLight position={[3, 3, 5]} intensity={2.4} color="#ffffff" />
-        <pointLight position={[isMobile ? 0 : 2.0, 1.0, 3.5]} intensity={2.2} color="#ffffff" distance={8} />
+        <directionalLight position={[0, 2, 5]} intensity={2.4} color="#ffffff" />
+        <directionalLight position={[3, 3, 4]} intensity={1.8} color="#ffffff" />
+        <pointLight position={[isMobile ? 0 : 1.9, 0.5, 3.5]} intensity={2.0} color="#e0f2fe" distance={8} />
 
         {/* Atmospheric Blue Backlight */}
         <pointLight position={[0, -2, -3]} intensity={2.0} color="#0070f3" distance={8} />
