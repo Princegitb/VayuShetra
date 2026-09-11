@@ -3,7 +3,6 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import Robot from './Robot'
 import AirParticles from './AirParticles'
-import FloatingData from './FloatingData'
 
 // Camera Rig that adds subtle cinematic parallax to the mouse coordinates
 function CameraRig({ mousePos, isMobile }) {
@@ -77,10 +76,9 @@ export default function VayushetraScene({ dashboardData }) {
         {/* Dynamic Camera Parallax */}
         <CameraRig mousePos={mousePos} isMobile={isMobile} />
 
-        {/* Sentinel Group (Positioned on the right on desktop, center on mobile) */}
-        <group position={[isMobile ? 0 : 1.75, isMobile ? 0.2 : 0, 0]}>
+        {/* Sentinel Robot (Positioned on the right on desktop, center on mobile, scaled up for full clarity) */}
+        <group position={[isMobile ? 0 : 1.75, isMobile ? 0.2 : 0, 0]} scale={[1.18, 1.18, 1.18]}>
           <Robot mousePos={mousePos} isMobile={isMobile} />
-          <FloatingData dashboardData={dashboardData} isMobile={isMobile} />
         </group>
 
         {/* Air Particulate Stream (Permeating the entire scene volume) */}

@@ -30,8 +30,6 @@ export default function CinematicLanding({ onEnterDashboard }) {
   } = useStore()
 
   // State
-  const [activeLayer, setActiveLayer] = useState('AQI')
-  const [selectedHotspotIndex, setSelectedHotspotIndex] = useState(0)
   const [aiModalOpen, setAiModalOpen] = useState(false)
   const [aiQuery, setAiQuery] = useState('')
   const [aiConversation, setAiConversation] = useState([
@@ -42,122 +40,6 @@ export default function CinematicLanding({ onEnterDashboard }) {
     }
   ])
   const [aiLoading, setAiLoading] = useState(false)
-
-  // Hotspots dataset
-  const hotspotsList = useMemo(() => [
-    {
-      id: '01',
-      name: 'Delhi NCR Basin Trap',
-      district: 'Delhi',
-      state: 'National Capital Territory',
-      aqi: 215,
-      pm25: 90.5,
-      hcho: 1.40,
-      no2: 52.0,
-      so2: 21.0,
-      co: 2.15,
-      type: 'Persistent Nocturnal Inversion',
-      trend: '+14% Exceedance (7-day)',
-      trendType: 'up',
-      intensity: 'Critical (Severe)',
-      drivers: ['Winter Inversion Cap', 'Urban Highway Freight', 'Stubble Influx NW'],
-      dominantSource: 'Multi-Source Basin Entrainment (38% Stubble / 42% Traffic / 20% Kilns)',
-      blh: '520m',
-      ventilation: '1,820 m²/s (Poor)'
-    },
-    {
-      id: '02',
-      name: 'Punjab Agricultural Belt',
-      district: 'Sangrur & Ludhiana',
-      state: 'Punjab',
-      aqi: 182,
-      pm25: 76.5,
-      hcho: 1.68,
-      no2: 31.0,
-      so2: 13.0,
-      co: 1.38,
-      type: 'Biomass Combustion Source',
-      trend: '+22% Fire Radiative Power',
-      trendType: 'up',
-      intensity: 'High Thermal Activity',
-      drivers: ['Post-Harvest Residue Burning', 'Agricultural Open Fire Influx'],
-      dominantSource: 'Agricultural Stubble Combustion (58% Biomass / 24% Traffic / 18% Industry)',
-      blh: '590m',
-      ventilation: '2,650 m²/s (Moderate)'
-    },
-    {
-      id: '03',
-      name: 'Haryana Transit Valley',
-      district: 'Karnal & Panipat',
-      state: 'Haryana',
-      aqi: 162,
-      pm25: 68.0,
-      hcho: 1.32,
-      no2: 34.0,
-      so2: 18.5,
-      co: 1.25,
-      type: 'Advection Transit Corridor',
-      trend: '+8% Transboundary Drift',
-      trendType: 'up',
-      intensity: 'Elevated Advection',
-      drivers: ['Stubble Smoke Plume Transit', 'GT Road Heavy Diesel Freight'],
-      dominantSource: 'Transboundary Transit Plume (45% Upwind Smoke / 35% Transport / 20% Industrial)',
-      blh: '610m',
-      ventilation: '2,400 m²/s (Moderate)'
-    },
-    {
-      id: '04',
-      name: 'Kanpur Industrial Core',
-      district: 'Kanpur Nagar',
-      state: 'Uttar Pradesh',
-      aqi: 198,
-      pm25: 84.0,
-      hcho: 1.15,
-      no2: 48.0,
-      so2: 38.0,
-      co: 1.90,
-      type: 'Industrial Point-Source Stack',
-      trend: '+5% Stationary Stack Flux',
-      trendType: 'up',
-      intensity: 'High Industrial Density',
-      drivers: ['Tannery Boilers & Chemical Stacks', 'High-Sulfur Fuel Combustion'],
-      dominantSource: 'Industrial & Stationary Stacks (52% Industry / 28% Vehicular / 20% Domestic)',
-      blh: '550m',
-      ventilation: '1,980 m²/s (Poor)'
-    },
-    {
-      id: '05',
-      name: 'Kolkata Delta Inversion',
-      district: 'Kolkata Urban',
-      state: 'West Bengal',
-      aqi: 145,
-      pm25: 58.5,
-      hcho: 1.05,
-      no2: 39.0,
-      so2: 15.0,
-      co: 1.45,
-      type: 'Moisture Trapping & Road Dust',
-      trend: '-3% Recent Modulation',
-      trendType: 'down',
-      intensity: 'Moderate Accumulation',
-      drivers: ['High Relative Humidity', 'Diesel Marine Transport', 'Urban Road Resuspension'],
-      dominantSource: 'Vehicular & Coastal Stagnation (46% Vehicular / 30% Industrial / 24% Other)',
-      blh: '630m',
-      ventilation: '2,800 m²/s (Moderate)'
-    }
-  ], [])
-
-  const currentHotspot = hotspotsList[selectedHotspotIndex]
-
-  // Layer metadata
-  const layerMetadata = {
-    'AQI': { name: 'Air Quality Index', unit: 'AQI', benchmark: '100 (Safe)', color: '#00F0FF', desc: 'Composite index weighted across 8 NAAQS criteria pollutants.' },
-    'HCHO': { name: 'Formaldehyde Column', unit: '10¹⁵ mol/cm²', benchmark: '1.20', color: '#4ADE80', desc: 'Marker for volatile organic compound (VOC) emissions from agricultural biomass combustion.' },
-    'NO2': { name: 'Nitrogen Dioxide', unit: 'µg/m³', benchmark: '80 µg/m³ (24h)', color: '#A855F7', desc: 'Tropospheric trace gas emitted primarily by high-temperature combustion in vehicle engines & power plants.' },
-    'SO2': { name: 'Sulfur Dioxide', unit: 'µg/m³', benchmark: '80 µg/m³ (24h)', color: '#F59E0B', desc: 'Emitted by coal-fired thermal power stations, brick kilns, and smelting industrial facilities.' },
-    'CO': { name: 'Carbon Monoxide', unit: 'mg/m³', benchmark: '2.00 mg/m³', color: '#F97316', desc: 'Direct marker of incomplete smoldering combustion from farm fires and unburnt fuels.' },
-    'PM2.5': { name: 'Fine Particulate Matter', unit: 'µg/m³', benchmark: '60 µg/m³ (24h)', color: '#38BDF8', desc: 'Respirable microscopic particles penetrating deep into pulmonary alveolar tissue.' },
-  }
 
   // Lenis Smooth Scrolling Setup
   useEffect(() => {
@@ -228,7 +110,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
       } else if (qLower.includes('simulate') || qLower.includes('policy') || qLower.includes('reduction')) {
         reply = `[MODEL INFERENCE - CHEMICAL MASS BALANCE POLICY REGRESSOR]\nA simulated 50% stubble reduction in Punjab/Haryana is projected to reduce downwind Delhi-NCR PM2.5 concentrations by 28.4 µg/m³ (-31.4%), mitigating approximately 640 emergency respiratory hospital admissions across the regional corridor.`
       } else {
-        reply = `[DIAGNOSTIC SUMMARY FOR ${currentHotspot.name.toUpperCase()}]\nCurrent observed AQI: ${currentHotspot.aqi} (${currentHotspot.intensity}). Atmospheric Boundary Layer is compressed at ${currentHotspot.blh} with ventilation index of ${currentHotspot.ventilation}.\n\nPrimary Driver: ${currentHotspot.dominantSource}.\nAll telemetry validated against Sentinel-5P TROPOMI and CPCB continuous ground stations.`
+        reply = `[DIAGNOSTIC SUMMARY - INDO-GANGETIC BASIN]\nCurrent observed regional AQI: 215 (Severe). Planetary Boundary Layer Height is compressed at 520m with ventilation index of 1,820 m²/s.\n\nPrimary Drivers: Agricultural stubble smoke entrainment, nocturnal thermal inversion, and urban transport.\nAll telemetry validated against Sentinel-5P TROPOMI and CPCB continuous ground stations.`
       }
 
       setAiConversation(prev => [...prev, { role: 'assistant', text: reply }])
@@ -269,20 +151,11 @@ export default function CinematicLanding({ onEnterDashboard }) {
         <nav className="hidden md:flex items-center space-x-6 text-xs font-mono text-zinc-400">
           <a href="#hero" className="hover:text-cyan-400 transition-colors">01 // CORE</a>
           <a href="#science" className="hover:text-cyan-400 transition-colors">02 // ATMOSPHERE</a>
-          <a href="#hotspots" className="hover:text-cyan-400 transition-colors">03 // HOTSPOTS</a>
-          <a href="#pipeline" className="hover:text-cyan-400 transition-colors">04 // PIPELINE</a>
+          <a href="#pipeline" className="hover:text-cyan-400 transition-colors">03 // PIPELINE</a>
         </nav>
 
         {/* Right CTA */}
         <div className="flex items-center space-x-3">
-          <button
-            onClick={() => setAiModalOpen(true)}
-            className="hidden sm:flex items-center space-x-1.5 text-xs font-mono px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-cyan-500/10 border border-white/10 hover:border-cyan-400/40 text-cyan-400 transition-all"
-          >
-            <Zap size={13} />
-            <span>AI INTEL</span>
-          </button>
-
           <MagneticButton
             onClick={onEnterDashboard}
             className="px-4 lg:px-5 py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-[#05070A] font-black text-xs font-mono shadow-[0_0_20px_rgba(0,240,255,0.35)] transition-all"
@@ -480,156 +353,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
       </section>
 
       {/* ====================================================================
-          ACT 3: INTERACTIVE HOTSPOT & ATMOSPHERIC SPECTROMETRY
-         ==================================================================== */}
-      <section id="hotspots" className="relative py-28 px-4 sm:px-8 border-t border-white/[0.06] bg-[#05070A]">
-        <div className="max-w-6xl mx-auto space-y-12 gsap-reveal">
-          
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/[0.08] pb-6">
-            <div className="space-y-2">
-              <div className="hud-tag inline-block">REGIONAL CRITICAL HOTSPOTS</div>
-              <h2 className="text-3xl sm:text-5xl font-black text-white font-display uppercase tracking-tight">
-                INDO-GANGETIC AIR INTELLIGENCE
-              </h2>
-              <p className="text-xs text-zinc-400 max-w-xl">
-                Select criteria pollutants and critical regional hotspots to inspect real-time satellite telemetry, mixing depths, and dominant emission sources.
-              </p>
-            </div>
-
-            {/* Layer Filter Buttons */}
-            <div className="flex flex-wrap gap-1.5 p-1 rounded-xl bg-[#0B1016] border border-white/10">
-              {Object.keys(layerMetadata).map((layer) => (
-                <button
-                  key={layer}
-                  onClick={() => setActiveLayer(layer)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
-                    activeLayer === layer
-                      ? 'bg-cyan-400 text-[#05070A] shadow-[0_0_15px_rgba(0,240,255,0.4)]'
-                      : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
-                  }`}
-                >
-                  {layer}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Hotspot Explorer Dual Panel */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            
-            {/* Left: Hotspot List Selector */}
-            <div className="lg:col-span-5 space-y-3">
-              <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest px-1">
-                SELECT CRITICAL MONITORING ZONE
-              </div>
-              {hotspotsList.map((spot, idx) => {
-                const isSelected = idx === selectedHotspotIndex
-                return (
-                  <div
-                    key={spot.id}
-                    onClick={() => setSelectedHotspotIndex(idx)}
-                    className={`p-4 rounded-xl cursor-pointer transition-all border ${
-                      isSelected
-                        ? 'bg-[#0B1016] border-cyan-400 shadow-[0_0_20px_rgba(0,240,255,0.15)] translate-x-1.5'
-                        : 'bg-white/[0.02] border-white/[0.06] hover:border-white/20 hover:bg-white/[0.04]'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <span className="font-mono text-xs text-cyan-400 font-bold">{spot.id}</span>
-                        <h4 className="text-sm font-bold text-white font-sans">{spot.name}</h4>
-                      </div>
-                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold ${
-                        spot.aqi > 200 ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
-                      }`}>
-                        AQI {spot.aqi}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400 mt-2">
-                      <span>{spot.district}, {spot.state}</span>
-                      <span className="text-cyan-300">{spot.intensity}</span>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* Right: Selected Hotspot Deep Telemetry HUD */}
-            <div className="lg:col-span-7 hud-panel p-6 border-cyan-500/40 space-y-6">
-              
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
-                <div>
-                  <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-widest block">
-                    TELEMETRY ANALYSIS // ZONE #{currentHotspot.id}
-                  </span>
-                  <h3 className="text-2xl font-black text-white font-display uppercase mt-0.5">
-                    {currentHotspot.name}
-                  </h3>
-                  <span className="text-xs text-zinc-400 font-sans">
-                    Classification: <strong className="text-cyan-300">{currentHotspot.type}</strong>
-                  </span>
-                </div>
-                <div className="text-right">
-                  <div className="text-3xl font-black font-mono text-cyan-400">
-                    {activeLayer === 'AQI' && currentHotspot.aqi}
-                    {activeLayer === 'HCHO' && `${currentHotspot.hcho} × 10¹⁵`}
-                    {activeLayer === 'NO2' && `${currentHotspot.no2} µg/m³`}
-                    {activeLayer === 'SO2' && `${currentHotspot.so2} µg/m³`}
-                    {activeLayer === 'CO' && `${currentHotspot.co} mg/m³`}
-                    {activeLayer === 'PM2.5' && `${currentHotspot.pm25} µg/m³`}
-                  </div>
-                  <span className="text-[10px] font-mono text-zinc-400 uppercase">
-                    Current {activeLayer} Observed Value
-                  </span>
-                </div>
-              </div>
-
-              {/* Driver Pills */}
-              <div className="space-y-2">
-                <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest block">
-                  PRIMARY FORCING FACTORS & DRIVERS
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {currentHotspot.drivers.map((d, i) => (
-                    <span key={i} className="px-3 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-zinc-200">
-                      ⚡ {d}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Source Attribution Breakdown */}
-              <div className="p-4 rounded-xl bg-black/40 border border-white/[0.08] space-y-2">
-                <div className="flex justify-between items-center text-xs font-mono">
-                  <span className="text-cyan-400 font-bold uppercase">SOURCE ATTRIBUTION BREAKDOWN</span>
-                  <span className="text-zinc-400">{currentHotspot.trend}</span>
-                </div>
-                <p className="text-xs text-zinc-300 leading-relaxed font-sans">
-                  {currentHotspot.dominantSource}
-                </p>
-              </div>
-
-              {/* Boundary Layer & Ventilation Specs */}
-              <div className="grid grid-cols-2 gap-3 pt-2">
-                <div className="p-3 rounded-lg bg-white/[0.03] border border-white/[0.06]">
-                  <span className="text-[10px] font-mono text-zinc-500 block uppercase">PLANETARY BOUNDARY LAYER</span>
-                  <span className="text-sm font-mono font-bold text-white">{currentHotspot.blh} (ERA5 Reanalysis)</span>
-                </div>
-                <div className="p-3 rounded-lg bg-white/[0.03] border border-white/[0.06]">
-                  <span className="text-[10px] font-mono text-zinc-500 block uppercase">VENTILATION INDEX</span>
-                  <span className="text-sm font-mono font-bold text-white">{currentHotspot.ventilation}</span>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* ====================================================================
-          ACT 4: HIGH-THROUGHPUT DATA PIPELINE (SPACE TO GROUND)
+          ACT 3: HIGH-THROUGHPUT DATA PIPELINE (SPACE TO GROUND)
          ==================================================================== */}
       <section id="pipeline" className="relative py-28 px-4 sm:px-8 border-t border-white/[0.06] bg-[#070B10]">
         <div className="max-w-6xl mx-auto space-y-16 gsap-reveal">
@@ -738,18 +462,8 @@ export default function CinematicLanding({ onEnterDashboard }) {
       </footer>
 
       {/* ====================================================================
-          ACT 6: VAYU AI CONSOLE MODAL & FLOATING TRIGGER
+          ACT 5: VAYU AI CONSOLE MODAL
          ==================================================================== */}
-      {/* Floating Action Trigger */}
-      <button
-        onClick={() => setAiModalOpen(true)}
-        className="fixed bottom-6 right-6 z-40 px-4 py-3 rounded-2xl bg-[#0B1016]/95 border border-cyan-400 text-cyan-400 font-mono text-xs font-bold shadow-[0_0_30px_rgba(0,240,255,0.35)] flex items-center space-x-2.5 hover:scale-105 transition-all backdrop-blur-xl"
-      >
-        <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-        <Zap size={14} />
-        <span>ASK VAYU AI</span>
-      </button>
-
       {/* Vayu AI Modal Console */}
       {aiModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
