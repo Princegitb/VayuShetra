@@ -76,8 +76,8 @@ export default function VayushetraScene({ dashboardData }) {
         {/* Dynamic Camera Parallax */}
         <CameraRig mousePos={mousePos} isMobile={isMobile} />
 
-        {/* Sentinel Robot (Positioned on the right on desktop, center on mobile, scaled up for full clarity) */}
-        <group position={[isMobile ? 0 : 1.75, isMobile ? 0.2 : 0, 0]} scale={[1.18, 1.18, 1.18]}>
+        {/* Sentinel Robot (Positioned on the right on desktop, center on mobile, scaled elegantly) */}
+        <group position={[isMobile ? 0 : 1.9, isMobile ? 0.1 : 0, 0]} scale={[0.95, 0.95, 0.95]}>
           <Robot mousePos={mousePos} isMobile={isMobile} />
         </group>
 

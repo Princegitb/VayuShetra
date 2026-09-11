@@ -40,6 +40,9 @@ export default function CinematicLanding({ onEnterDashboard }) {
     }
   ])
   const [aiLoading, setAiLoading] = useState(false)
+  const lenisRef = useRef(null)
+  const chatEndRef = useRef(null)
+  const conversationBoxRef = useRef(null)
 
   // Lenis Smooth Scrolling Setup
   useEffect(() => {
@@ -52,6 +55,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
       orientation: 'vertical',
       smoothWheel: true,
     })
+    lenisRef.current = lenis
 
     lenis.on('scroll', ScrollTrigger.update)
 
@@ -88,6 +92,27 @@ export default function CinematicLanding({ onEnterDashboard }) {
       ScrollTrigger.getAll().forEach(t => t.kill())
     }
   }, [])
+
+  // Lock background scroll when AI modal is active so inner modal scrolls smoothly
+  useEffect(() => {
+    if (aiModalOpen) {
+      lenisRef.current?.stop()
+      document.body.style.overflow = 'hidden'
+    } else {
+      lenisRef.current?.start()
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [aiModalOpen])
+
+  // Auto-scroll chat stream to bottom on new messages
+  useEffect(() => {
+    if (aiModalOpen) {
+      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [aiConversation, aiLoading, aiModalOpen])
 
   // AI Handler
   const handleAiSubmit = (questionText) => {
@@ -466,11 +491,18 @@ export default function CinematicLanding({ onEnterDashboard }) {
          ==================================================================== */}
       {/* Vayu AI Modal Console */}
       {aiModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="w-full max-w-2xl hud-panel hud-panel-glow flex flex-col max-h-[85vh] border-cyan-500/40 animate-fadeIn">
+        <div 
+          data-lenis-prevent
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overscroll-contain"
+          onClick={(e) => e.target === e.currentTarget && setAiModalOpen(false)}
+        >
+          <div 
+            data-lenis-prevent
+            className="w-full max-w-2xl hud-panel hud-panel-glow flex flex-col max-h-[88vh] border-cyan-500/40 animate-fadeIn shadow-2xl overflow-hidden"
+          >
             
             {/* Modal Header */}
-            <div className="p-4 border-b border-white/[0.08] flex justify-between items-center bg-[#070B10]">
+            <div className="p-4 border-b border-white/[0.08] flex justify-between items-center bg-[#070B10] flex-shrink-0">
               <div className="flex items-center space-x-2 font-mono">
                 <Zap size={15} className="text-cyan-400" />
                 <span className="text-xs font-black uppercase text-white">VAYU AI // ENVIRONMENTAL INTELLIGENCE COPILOT</span>
@@ -483,8 +515,17 @@ export default function CinematicLanding({ onEnterDashboard }) {
               </button>
             </div>
 
-            {/* Conversation Stream */}
-            <div className="p-5 flex-1 overflow-y-auto space-y-4 font-mono text-xs">
+            {/* Conversation Stream with contained scroll */}
+            <div 
+              data-lenis-prevent
+              ref={conversationBoxRef}
+              className="p-5 flex-1 overflow-y-auto space-y-4 font-mono text-xs max-h-[55vh] overscroll-contain"
+              style={{
+                overscrollBehavior: 'contain',
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#00f0ff #05070a'
+              }}
+            >
               {aiConversation.map((msg, i) => (
                 <div 
                   key={i} 
@@ -507,10 +548,11 @@ export default function CinematicLanding({ onEnterDashboard }) {
                   <span>Cross-referencing Sentinel-5P TROPOMI & ERA5 Boundary Layer Heights...</span>
                 </div>
               )}
+              <div ref={chatEndRef} />
             </div>
 
             {/* Quick Question Chips */}
-            <div className="px-4 py-2 border-t border-white/[0.08] flex flex-wrap gap-1.5 bg-[#070B10]">
+            <div className="px-4 py-2.5 border-t border-white/[0.08] flex flex-wrap gap-1.5 bg-[#070B10] flex-shrink-0">
               {[
                 "Why is HCHO high in Punjab today?",
                 "What is driving Delhi-NCR PM2.5?",
@@ -527,7 +569,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
             </div>
 
             {/* Input Bar */}
-            <div className="p-3 border-t border-white/[0.08] bg-[#070B10] flex items-center space-x-2">
+            <div className="p-3 border-t border-white/[0.08] bg-[#070B10] flex items-center space-x-2 flex-shrink-0">
               <input
                 type="text"
                 value={aiQuery}
@@ -551,3 +593,4 @@ export default function CinematicLanding({ onEnterDashboard }) {
     </div>
   )
 }
+

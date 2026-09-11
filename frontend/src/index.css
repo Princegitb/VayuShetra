@@ -396,3 +396,18 @@ html.lenis, html.lenis body {
   }
 }
 
+/* Explicit Custom Scrollbar for Lenis prevented containers */
+[data-lenis-prevent]::-webkit-scrollbar {
+  width: 6px;
+}
+[data-lenis-prevent]::-webkit-scrollbar-track {
+  background: rgba(5, 7, 10, 0.8);
+}
+[data-lenis-prevent]::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.35);
+  border-radius: 4px;
+}
+[data-lenis-prevent]::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 240, 255, 0.65);
+}
+
