@@ -179,14 +179,17 @@ export default function CinematicLanding({ onEnterDashboard }) {
           <a href="#pipeline" className="hover:text-cyan-400 transition-colors">03 // PIPELINE</a>
         </nav>
 
-        {/* Right CTA */}
-        <div className="flex items-center space-x-3">
+        {/* Right CTA + LIVE Indicator */}
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 font-semibold">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>LIVE • 22:41 IST</span>
+          </div>
           <MagneticButton
             onClick={onEnterDashboard}
-            className="px-4 lg:px-5 py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-[#05070A] font-black text-xs font-mono shadow-[0_0_20px_rgba(0,240,255,0.35)] transition-all"
+            className="px-5 py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-[#05070A] font-black text-xs font-mono shadow-[0_0_20px_rgba(0,240,255,0.35)] transition-all"
           >
-            <span>ENTER DASHBOARD</span>
-            <ArrowRight size={13} />
+            <span>ENTER DASHBOARD →</span>
           </MagneticButton>
         </div>
       </header>
@@ -194,112 +197,307 @@ export default function CinematicLanding({ onEnterDashboard }) {
       {/* ====================================================================
           ACT 1: CINEMATIC 3D HERO (PROCEDURAL SENTINEL ROBOT + PARTICLES)
          ==================================================================== */}
-      <section id="hero" className="relative min-h-screen flex flex-col justify-center items-center px-4 sm:px-8 pt-24 pb-16 overflow-hidden">
+      <section id="hero" className="relative min-h-screen flex flex-col justify-between items-center px-4 sm:px-8 pt-20 pb-6 overflow-hidden">
         
-        {/* 3D Canvas Background (Sentinel Drone + Aerosol Simulation) */}
+        {/* 3D Canvas Background (Atmospheric Earth + Vayu Robot + Conduit + Aerosols) */}
         <VayushetraScene dashboardData={dashboardData} />
 
         {/* Ambient Radial Vignette & Grid */}
         <div className="absolute inset-0 bg-radial-gradient pointer-events-none z-0 opacity-80" />
         <div className="absolute inset-0 sci-grid-bg pointer-events-none opacity-40 z-0" />
 
-        {/* Central Hero Content Overlay */}
-        <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center pointer-events-auto my-auto">
+        {/* Main Hero Layer: Left Text + Floating Aerospace HUD Elements */}
+        <div className="relative z-10 max-w-7xl mx-auto w-full pt-8 sm:pt-12 pointer-events-auto">
           
           {/* Left Column: Headline, Narrative & Actions */}
-          <div className="lg:col-span-7 text-left space-y-6">
+          <div className="max-w-xl text-left space-y-4">
             
             {/* Status Capsule */}
-            <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#0B1016]/90 border border-cyan-400/30 text-cyan-300 text-xs font-mono shadow-[0_0_25px_rgba(0,240,255,0.15)] backdrop-blur-md">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#0B1016]/90 border border-cyan-400/30 text-cyan-300 text-[11px] font-mono shadow-[0_0_20px_rgba(0,240,255,0.15)] backdrop-blur-md">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span className="tracking-wider uppercase font-semibold">
                 NCAP // CPCB & ISRO INTEGRATED
               </span>
             </div>
 
             {/* Main Cinematic Title */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black font-display tracking-tight text-white uppercase leading-[1.08]">
-              ATMOSPHERIC INTELLIGENCE.
+            <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-black font-display tracking-tight text-white uppercase leading-[1.06]">
+              ATMOSPHERIC
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500 drop-shadow-[0_0_35px_rgba(0,240,255,0.35)]">
+              INTELLIGENCE.
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500 drop-shadow-[0_0_35px_rgba(0,240,255,0.4)]">
                 BEYOND BORDERS.
               </span>
             </h1>
 
             {/* Subtitle Description */}
-            <p className="max-w-xl text-sm sm:text-base text-zinc-400 font-medium leading-relaxed">
+            <p className="max-w-lg text-xs sm:text-sm text-zinc-400 font-medium leading-relaxed">
               High-resolution Sentinel-5P TROPOMI trace gas retrievals, ERA5 nocturnal boundary layer inversion modeling, and chemical mass balance AI. Pinpointing transboundary smoke advection across the Indo-Gangetic Basin.
             </p>
 
-            {/* Magnetic Actions */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
               <MagneticButton
                 onClick={onEnterDashboard}
-                className="px-7 py-3.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-[#05070A] font-black text-xs font-mono shadow-[0_0_30px_rgba(0,240,255,0.45)] transition-all"
+                className="px-6 py-3 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-[#05070A] font-black text-xs font-mono shadow-[0_0_25px_rgba(0,240,255,0.4)] transition-all"
               >
-                <span>ENTER MISSION CONTROL</span>
-                <ArrowRight size={14} />
+                <span>EXPLORE ATMOSPHERE →</span>
               </MagneticButton>
 
               <MagneticButton
                 onClick={() => setAiModalOpen(true)}
-                className="px-5 py-3.5 rounded-xl bg-[#0B1016]/90 hover:bg-[#121a24] text-white border border-white/15 hover:border-cyan-400/40 text-xs font-mono shadow-lg transition-all"
+                className="px-5 py-3 rounded-xl bg-[#0B1016]/90 hover:bg-[#121a24] text-white border border-cyan-400/30 hover:border-cyan-400 text-xs font-mono shadow-lg transition-all flex items-center gap-2"
               >
                 <Zap size={14} className="text-cyan-400" />
                 <span>VAYU AI COPILOT</span>
               </MagneticButton>
             </div>
 
-            {/* Live Atmospheric Telemetry Ticker Strip */}
-            <div className="pt-6 grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-2xl">
-              <div className="hud-panel p-2.5 text-left border-cyan-500/30">
-                <div className="text-[8px] font-mono text-cyan-400 uppercase font-bold tracking-wider">
-                  BASIN AQI
+            {/* Partner Proof Row */}
+            <div className="pt-2 flex flex-wrap items-center gap-3 text-xs font-mono text-zinc-400">
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-1.5">
+                  <div className="w-5 h-5 rounded-full bg-cyan-500/30 border border-cyan-400/60 flex items-center justify-center text-[9px]">👨‍🔬</div>
+                  <div className="w-5 h-5 rounded-full bg-emerald-500/30 border border-emerald-400/60 flex items-center justify-center text-[9px]">👩‍🔬</div>
+                  <div className="w-5 h-5 rounded-full bg-purple-500/30 border border-purple-400/60 flex items-center justify-center text-[9px]">🧑‍💻</div>
                 </div>
-                <div className="text-lg font-black font-mono text-white mt-0.5">
-                  215 <span className="text-[9px] text-red-400 font-semibold">SEVERE</span>
-                </div>
+                <span className="text-[10px] text-zinc-400">Built for a cleaner tomorrow.</span>
               </div>
-
-              <div className="hud-panel p-2.5 text-left border-emerald-500/30">
-                <div className="text-[8px] font-mono text-emerald-400 uppercase font-bold tracking-wider">
-                  HCHO (TROPOMI)
-                </div>
-                <div className="text-lg font-black font-mono text-white mt-0.5">
-                  1.68 <span className="text-[9px] text-emerald-400 font-semibold">10¹⁵</span>
-                </div>
-              </div>
-
-              <div className="hud-panel p-2.5 text-left border-purple-500/30">
-                <div className="text-[8px] font-mono text-purple-400 uppercase font-bold tracking-wider">
-                  INVERSION LID
-                </div>
-                <div className="text-lg font-black font-mono text-white mt-0.5">
-                  520m <span className="text-[9px] text-purple-400 font-semibold">TRAP</span>
-                </div>
-              </div>
-
-              <div className="hud-panel p-2.5 text-left border-amber-500/30">
-                <div className="text-[8px] font-mono text-amber-400 uppercase font-bold tracking-wider">
-                  ACTIVE FIRES
-                </div>
-                <div className="text-lg font-black font-mono text-white mt-0.5">
-                  1,420 <span className="text-[9px] text-amber-400 font-semibold">VIIRS</span>
-                </div>
+              <div className="hidden sm:flex items-center gap-2 text-[10px] text-zinc-500 border-l border-white/10 pl-3">
+                <span className="text-[9px] uppercase tracking-wider text-zinc-400 font-bold">DATA PARTNERS</span>
+                <span className="text-zinc-300 font-semibold">ISRO</span>
+                <span>|</span>
+                <span className="text-zinc-300 font-semibold">CPCB</span>
+                <span>|</span>
+                <span className="text-zinc-300 font-semibold">NCAP</span>
               </div>
             </div>
 
           </div>
 
-          {/* Right Column: Clear viewport area dedicated to 3D Sentinel drone */}
-          <div className="lg:col-span-5 h-[340px] sm:h-[460px] lg:h-[580px] pointer-events-none" />
+          {/* ====================================================================
+              FLOATING AEROSPACE HUD OVERLAYS (MATCHING USER REFERENCE MOCKUP!)
+             ==================================================================== */}
+          
+          {/* 1. Sentinel-5P Satellite Tag (Top-left above Earth) */}
+          <div className="hidden md:flex absolute top-[10%] left-[38%] lg:left-[40%] flex-col text-left hud-panel px-2.5 py-1.5 border-cyan-400/30 bg-[#04070D]/85 backdrop-blur-md shadow-[0_0_15px_rgba(0,240,255,0.1)] pointer-events-auto">
+            <div className="text-[8px] font-mono font-bold text-cyan-400 tracking-wider uppercase">
+              SENTINEL-5P
+            </div>
+            <div className="text-[7px] font-mono text-zinc-400">REAL-TIME DATA</div>
+          </div>
+
+          {/* 2. Atmospheric Layers Card (Top-right of Earth) */}
+          <div className="hidden lg:flex absolute top-[8%] right-[29%] xl:right-[31%] flex-col hud-panel px-3 py-2 border-cyan-400/25 bg-[#04070D]/85 backdrop-blur-md shadow-[0_0_20px_rgba(0,240,255,0.08)] pointer-events-auto min-w-[125px]">
+            <div className="text-[8px] font-mono font-bold tracking-widest text-cyan-400 uppercase border-b border-white/[0.08] pb-1 mb-1.5">
+              ATMOSPHERIC LAYERS
+            </div>
+            <div className="space-y-1 text-[8px] font-mono tracking-wider text-zinc-300">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span>CO</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                <span>NO₂</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                <span>SO₂</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                <span>O₃</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-lime-400" />
+                <span>AEROSOLS</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Wind Flow Tag (Upper right of Earth) */}
+          <div className="hidden md:flex absolute top-[25%] right-[32%] xl:right-[33%] flex-col text-left hud-panel px-3 py-1.5 border-cyan-400/35 bg-[#04070D]/85 backdrop-blur-md shadow-[0_0_15px_rgba(0,240,255,0.12)] pointer-events-auto">
+            <div className="text-[8px] font-mono font-bold text-cyan-400 tracking-wider uppercase">
+              WIND FLOW
+            </div>
+            <div className="text-xs font-black font-mono text-white mt-0.5 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              12.4 km/h
+            </div>
+          </div>
+
+          {/* 4. India Atmospheric Beacon Tag (Center of Earth, above golden pin) */}
+          <div className="hidden md:flex absolute top-[40%] left-[48%] lg:left-[49%] flex-col text-left hud-panel px-3 py-2 border-yellow-400/40 bg-[#04070D]/90 backdrop-blur-md shadow-[0_0_20px_rgba(250,204,21,0.18)] pointer-events-auto">
+            <div className="text-[8px] font-mono font-bold text-zinc-400 uppercase">
+              INDIA
+            </div>
+            <div className="text-xs font-black font-mono text-white mt-0.5">
+              AQI 142
+            </div>
+            <div className="text-[8px] font-mono font-bold text-yellow-400 uppercase mt-0.5">
+              MODERATE
+            </div>
+          </div>
+
+          {/* 5. Cloud Cover Tag (West of India / Arabian Sea) */}
+          <div className="hidden md:flex absolute top-[58%] left-[34%] lg:left-[36%] items-center gap-2 hud-panel px-2.5 py-1.5 border-cyan-400/25 bg-[#04070D]/85 backdrop-blur-md pointer-events-auto">
+            <span className="text-xs">☁️</span>
+            <div>
+              <div className="text-[7px] font-mono text-zinc-400 uppercase tracking-wider">CLOUD COVER</div>
+              <div className="text-xs font-mono font-black text-white">28%</div>
+            </div>
+          </div>
+
+          {/* 6. PM2.5 Hotspot Tag (Southeast Asia / Bay of Bengal) */}
+          <div className="hidden md:flex absolute top-[60%] left-[55%] lg:left-[57%] flex-col text-left hud-panel px-2.5 py-1.5 border-red-500/35 bg-[#04070D]/85 backdrop-blur-md shadow-[0_0_20px_rgba(239,68,68,0.15)] pointer-events-auto">
+            <div className="text-[7px] font-mono text-zinc-400 uppercase tracking-wider">PM2.5</div>
+            <div className="text-xs font-mono font-black text-white mt-0.5 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_#ef4444]" />
+              67 µg/m³
+            </div>
+          </div>
+
+          {/* 7. Vayu AI Speech Bubble (Above/next to Robot on the right) */}
+          <div className="hidden lg:flex absolute top-[20%] right-20 xl:right-28 flex-col hud-panel px-4 py-3 border-cyan-400/40 bg-[#04070D]/90 backdrop-blur-md shadow-[0_0_30px_rgba(0,240,255,0.22)] max-w-[200px] pointer-events-auto rounded-2xl">
+            <div className="flex items-center justify-between pb-1 border-b border-white/[0.08]">
+              <span className="text-[9px] font-mono font-bold tracking-widest text-cyan-400 uppercase">
+                VAYU AI
+              </span>
+              <div className="flex items-center gap-0.5 h-3">
+                <span className="w-0.5 h-2 bg-cyan-400 animate-pulse" />
+                <span className="w-0.5 h-3 bg-cyan-400 animate-pulse delay-75" />
+                <span className="w-0.5 h-1.5 bg-cyan-400 animate-pulse delay-150" />
+                <span className="w-0.5 h-2.5 bg-cyan-400 animate-pulse delay-100" />
+              </div>
+            </div>
+            <p className="text-[10px] font-sans text-zinc-200 leading-relaxed pt-1.5">
+              Tracking the atmosphere for a cleaner, safer tomorrow !
+            </p>
+          </div>
+
+          {/* 8. Mission Status Panel (Far right edge) */}
+          <div className="hidden xl:flex absolute top-[44%] -translate-y-1/2 right-2 flex-col hud-panel px-3.5 py-3 border-cyan-400/25 bg-[#04070D]/90 backdrop-blur-md shadow-[0_0_20px_rgba(0,240,255,0.08)] pointer-events-auto min-w-[130px]">
+            <div className="text-[8px] font-mono font-bold tracking-widest text-cyan-400 uppercase border-b border-white/[0.08] pb-1.5 mb-2">
+              MISSION STATUS
+            </div>
+            <div className="space-y-1.5 text-[8px] font-mono tracking-wider text-zinc-300 uppercase">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" />
+                <span>SATELLITE LINK</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" />
+                <span>DATA STREAM</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" />
+                <span>AI MODELS</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" />
+                <span>SYSTEMS</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" />
+                <span>OPERATIONAL</span>
+              </div>
+            </div>
+          </div>
 
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 opacity-60 text-[10px] font-mono tracking-widest text-zinc-400">
-          <span>SCROLL FOR INTELLIGENCE</span>
-          <ChevronDown size={14} className="animate-bounce text-cyan-400" />
+        {/* ====================================================================
+            BOTTOM SECTION: 4 TELEMETRY CARDS + SCROLL INDICATOR (EXACT REFERENCE!)
+           ==================================================================== */}
+        <div className="relative z-10 max-w-7xl mx-auto w-full pt-4 pointer-events-auto space-y-3">
+          
+          {/* Row of 4 Telemetry Cards with Mini-Bar Histograms */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl">
+            {/* Card 1: BASIN AQI */}
+            <div className="hud-panel p-2.5 flex items-center justify-between border-cyan-500/30 bg-[#04070D]/85">
+              <div className="text-left">
+                <div className="text-[8px] font-mono text-cyan-400 uppercase font-bold tracking-wider">
+                  BASIN AQI
+                </div>
+                <div className="text-base font-black font-mono text-white mt-0.5 flex items-baseline gap-1.5">
+                  215 <span className="text-[8px] text-red-400 font-semibold uppercase">SEVERE</span>
+                </div>
+              </div>
+              <div className="flex items-end gap-1 h-6 pl-2">
+                {[30, 50, 65, 85, 100].map((h, i) => (
+                  <div key={i} className="w-1 bg-red-500 rounded-xs" style={{ height: `${h}%`, opacity: 0.4 + i * 0.15 }} />
+                ))}
+              </div>
+            </div>
+
+            {/* Card 2: HCHO (TROPOMI) */}
+            <div className="hud-panel p-2.5 flex items-center justify-between border-emerald-500/30 bg-[#04070D]/85">
+              <div className="text-left">
+                <div className="text-[8px] font-mono text-emerald-400 uppercase font-bold tracking-wider">
+                  HCHO (TROPOMI)
+                </div>
+                <div className="text-base font-black font-mono text-white mt-0.5 flex items-baseline gap-1.5">
+                  1.68 <span className="text-[8px] text-emerald-400 font-semibold">↑ 16%</span>
+                </div>
+              </div>
+              <div className="flex items-end gap-1 h-6 pl-2">
+                {[35, 45, 60, 80, 100].map((h, i) => (
+                  <div key={i} className="w-1 bg-cyan-400 rounded-xs" style={{ height: `${h}%`, opacity: 0.4 + i * 0.15 }} />
+                ))}
+              </div>
+            </div>
+
+            {/* Card 3: INVERSION LID */}
+            <div className="hud-panel p-2.5 flex items-center justify-between border-purple-500/30 bg-[#04070D]/85">
+              <div className="text-left">
+                <div className="text-[8px] font-mono text-purple-400 uppercase font-bold tracking-wider">
+                  INVERSION LID
+                </div>
+                <div className="text-base font-black font-mono text-white mt-0.5 flex items-baseline gap-1.5">
+                  520m <span className="text-[8px] text-purple-400 font-semibold uppercase">TRAP</span>
+                </div>
+              </div>
+              <div className="flex items-end gap-1 h-6 pl-2">
+                {[40, 55, 70, 90, 100].map((h, i) => (
+                  <div key={i} className="w-1 bg-purple-400 rounded-xs" style={{ height: `${h}%`, opacity: 0.4 + i * 0.15 }} />
+                ))}
+              </div>
+            </div>
+
+            {/* Card 4: ACTIVE FIRES */}
+            <div className="hud-panel p-2.5 flex items-center justify-between border-amber-500/30 bg-[#04070D]/85">
+              <div className="text-left">
+                <div className="text-[8px] font-mono text-amber-400 uppercase font-bold tracking-wider">
+                  ACTIVE FIRES
+                </div>
+                <div className="text-base font-black font-mono text-white mt-0.5 flex items-baseline gap-1.5">
+                  1,420 <span className="text-[8px] text-amber-400 font-semibold">VIIRS</span>
+                </div>
+              </div>
+              <div className="flex items-end gap-1 h-6 pl-2">
+                {[25, 40, 60, 75, 100].map((h, i) => (
+                  <div key={i} className="w-1 bg-amber-400 rounded-xs" style={{ height: `${h}%`, opacity: 0.4 + i * 0.15 }} />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Bar: Mouse Scroll Indicator + Slogan */}
+          <div className="flex items-center justify-between pt-1">
+            <div className="w-1/3" />
+            <div className="flex flex-col items-center gap-1 opacity-70 text-[9px] font-mono tracking-widest text-zinc-400">
+              <div className="w-3.5 h-5 rounded-full border border-zinc-500 flex items-start justify-center pt-0.5">
+                <span className="w-1 h-1 rounded-full bg-cyan-400 animate-bounce" />
+              </div>
+              <span>SCROLL TO EXPLORE</span>
+            </div>
+            <div className="w-1/3 text-right hidden md:block text-[8px] font-mono tracking-widest text-zinc-500 uppercase">
+              ATMOSPHERIC INTELLIGENCE FOR A BETTER TOMORROW —
+            </div>
+          </div>
+
         </div>
       </section>
 

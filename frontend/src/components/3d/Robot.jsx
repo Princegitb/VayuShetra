@@ -153,15 +153,25 @@ export default function Robot({ mousePos = { x: 0, y: 0 }, isMobile = false }) {
       bones.rightEar.rotation.z = THREE.MathUtils.damp(bones.rightEar.rotation.z, earTwitch, 4.0, safeDelta)
     }
 
-    // F. Arms subtle organic breathing sway
-    if (bones.leftArm) {
-      bones.leftArm.rotation.x = -2.74 + Math.sin(time * 1.5) * 0.04
-    }
+    // F. Right Arm: Pointing directly towards Earth & India (matches user reference image!)
     if (bones.rightArm) {
-      bones.rightArm.rotation.x = 2.74 - Math.sin(time * 1.5) * 0.04
+      const pointX = 1.35 + Math.sin(time * 1.2) * 0.04
+      const pointZ = -0.72 + Math.cos(time * 1.0) * 0.03
+      bones.rightArm.rotation.x = THREE.MathUtils.damp(bones.rightArm.rotation.x, pointX, 2.5, safeDelta)
+      bones.rightArm.rotation.z = THREE.MathUtils.damp(bones.rightArm.rotation.z, pointZ, 2.5, safeDelta)
+      bones.rightArm.rotation.y = -0.32
+    }
+    if (bones.leftArm) {
+      bones.leftArm.rotation.x = -2.65 + Math.sin(time * 1.5) * 0.03
+      bones.leftArm.rotation.z = 0.22
     }
 
-    // G. Contra-rotating atmospheric hover stabilizer rings
+    // G. Subtle organic eye/chest sensor pulse
+    if (pbrMaterial) {
+      pbrMaterial.emissiveIntensity = 3.2 + Math.sin(time * 2.8) * 0.6
+    }
+
+    // H. Contra-rotating atmospheric hover stabilizer rings
     if (gyro1Ref.current) gyro1Ref.current.rotation.z += safeDelta * 1.2
     if (gyro2Ref.current) gyro2Ref.current.rotation.z -= safeDelta * 1.6
   })
@@ -171,31 +181,55 @@ export default function Robot({ mousePos = { x: 0, y: 0 }, isMobile = false }) {
       {/* 3D Rigged Robot Mesh */}
       <primitive object={clonedFbx} />
 
-      {/* Atmospheric Ion-Levitation Energy Core hugging base pedestal */}
+      {/* Futuristic Concentric Holographic Platform (Beneath Feet) */}
       <group position={[0, -1.18, 0]}>
-        {/* Glowing Energy Plasma Disc */}
-        <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <ringGeometry args={[0.1, 0.72, 32]} />
+        {/* Semi-transparent Cyan Energy Ground Disc */}
+        <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[0.08, 1.25, 48]} />
           <meshBasicMaterial
             color="#00f0ff"
             transparent
-            opacity={0.3}
+            opacity={0.16}
             side={THREE.DoubleSide}
           />
         </mesh>
 
-        {/* Counter-Rotating Gyroscopic Stabilization Ring */}
-        <mesh ref={gyro1Ref} position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[0.74, 0.014, 16, 48]} />
-          <meshBasicMaterial color="#00f0ff" transparent opacity={0.7} />
+        {/* Concentric Neon Cyan Rings */}
+        {/* Outer Ring */}
+        <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[1.18, 1.24, 64]} />
+          <meshBasicMaterial color="#00f0ff" transparent opacity={0.85} side={THREE.DoubleSide} />
         </mesh>
-        <mesh ref={gyro2Ref} position={[0, -0.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[0.62, 0.012, 16, 40]} />
-          <meshBasicMaterial color="#38bdf8" transparent opacity={0.45} />
+        
+        {/* Middle Ring with Rotation */}
+        <mesh ref={gyro1Ref} position={[0, 0.025, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[0.82, 0.86, 64]} />
+          <meshBasicMaterial color="#38bdf8" transparent opacity={0.75} side={THREE.DoubleSide} />
         </mesh>
 
-        {/* Dynamic Atmospheric Ground Flare */}
-        <pointLight position={[0, 0.1, 0]} intensity={2.2} color="#00f0ff" distance={3.0} />
+        {/* Inner Ring with Counter-Rotation */}
+        <mesh ref={gyro2Ref} position={[0, 0.03, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[0.48, 0.52, 48]} />
+          <meshBasicMaterial color="#00f0ff" transparent opacity={0.9} side={THREE.DoubleSide} />
+        </mesh>
+
+        {/* Radial Holographic Tick Marks */}
+        {Array.from({ length: 12 }).map((_, i) => {
+          const angle = (i / 12) * Math.PI * 2
+          return (
+            <mesh
+              key={i}
+              position={[Math.cos(angle) * 1.02, 0.02, Math.sin(angle) * 1.02]}
+              rotation={[-Math.PI / 2, 0, angle]}
+            >
+              <planeGeometry args={[0.18, 0.02]} />
+              <meshBasicMaterial color="#00f0ff" transparent opacity={0.65} side={THREE.DoubleSide} />
+            </mesh>
+          )
+        })}
+
+        {/* Dynamic Holographic Ground Glow Flare */}
+        <pointLight position={[0, 0.25, 0]} intensity={3.0} color="#00f0ff" distance={3.8} />
       </group>
     </group>
   )
