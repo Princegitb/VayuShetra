@@ -276,49 +276,52 @@ export default function CinematicLanding({ onEnterDashboard }) {
 
           </div>
 
-          {/* ====================================================================
-              FLOATING AEROSPACE HUD OVERLAYS (MATCHING USER REFERENCE MOCKUP!)
-             ==================================================================== */}
+        </div>
+
+        {/* ====================================================================
+            FLOATING AEROSPACE HUD OVERLAYS (MATCHING USER REFERENCE IMAGE 2)
+           ==================================================================== */}
+        <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden select-none">
           
           {/* 1. Sentinel-5P Satellite Tag (Top-left above Earth) */}
-          <div className="hidden md:flex absolute top-[10%] left-[38%] lg:left-[40%] flex-col text-left hud-panel px-2.5 py-1.5 border-cyan-400/30 bg-[#04070D]/85 backdrop-blur-md shadow-[0_0_15px_rgba(0,240,255,0.1)] pointer-events-auto">
+          <div className="hidden md:flex absolute top-[18%] left-[38%] xl:left-[39%] flex-col text-left hud-badge px-2.5 py-1.5 border-cyan-400/35">
             <div className="text-[8px] font-mono font-bold text-cyan-400 tracking-wider uppercase">
               SENTINEL-5P
             </div>
-            <div className="text-[7px] font-mono text-zinc-400">REAL-TIME DATA</div>
+            <div className="text-[7px] font-mono text-zinc-400 tracking-wider">REAL-TIME DATA</div>
           </div>
 
           {/* 2. Atmospheric Layers Card (Top-right of Earth) */}
-          <div className="hidden lg:flex absolute top-[8%] right-[29%] xl:right-[31%] flex-col hud-panel px-3 py-2 border-cyan-400/25 bg-[#04070D]/85 backdrop-blur-md shadow-[0_0_20px_rgba(0,240,255,0.08)] pointer-events-auto min-w-[125px]">
+          <div className="hidden lg:flex absolute top-[12%] right-[29%] xl:right-[31%] flex-col hud-badge px-3 py-2 border-cyan-400/25 min-w-[125px]">
             <div className="text-[8px] font-mono font-bold tracking-widest text-cyan-400 uppercase border-b border-white/[0.08] pb-1 mb-1.5">
               ATMOSPHERIC LAYERS
             </div>
             <div className="space-y-1 text-[8px] font-mono tracking-wider text-zinc-300">
               <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]" />
                 <span>CO</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#22d3ee]" />
                 <span>NO₂</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_6px_#3b82f6]" />
                 <span>SO₂</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_#fbbf24]" />
                 <span>O₃</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-lime-400" />
+                <span className="w-1.5 h-1.5 rounded-full bg-lime-400 shadow-[0_0_6px_#a3e635]" />
                 <span>AEROSOLS</span>
               </div>
             </div>
           </div>
 
           {/* 3. Wind Flow Tag (Upper right of Earth) */}
-          <div className="hidden md:flex absolute top-[25%] right-[32%] xl:right-[33%] flex-col text-left hud-panel px-3 py-1.5 border-cyan-400/35 bg-[#04070D]/85 backdrop-blur-md shadow-[0_0_15px_rgba(0,240,255,0.12)] pointer-events-auto">
+          <div className="hidden md:flex absolute top-[34%] right-[33%] xl:right-[35%] flex-col text-left hud-badge px-3 py-1.5 border-cyan-400/35">
             <div className="text-[8px] font-mono font-bold text-cyan-400 tracking-wider uppercase">
               WIND FLOW
             </div>
@@ -329,7 +332,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
           </div>
 
           {/* 4. India Atmospheric Beacon Tag (Center of Earth, above golden pin) */}
-          <div className="hidden md:flex absolute top-[40%] left-[48%] lg:left-[49%] flex-col text-left hud-panel px-3 py-2 border-yellow-400/40 bg-[#04070D]/90 backdrop-blur-md shadow-[0_0_20px_rgba(250,204,21,0.18)] pointer-events-auto">
+          <div className="hidden md:flex absolute top-[44%] left-[49%] xl:left-[50%] flex-col text-left hud-badge px-3 py-2 border-yellow-400/40 shadow-[0_0_20px_rgba(250,204,21,0.18)]">
             <div className="text-[8px] font-mono font-bold text-zinc-400 uppercase">
               INDIA
             </div>
@@ -342,7 +345,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
           </div>
 
           {/* 5. Cloud Cover Tag (West of India / Arabian Sea) */}
-          <div className="hidden md:flex absolute top-[58%] left-[34%] lg:left-[36%] items-center gap-2 hud-panel px-2.5 py-1.5 border-cyan-400/25 bg-[#04070D]/85 backdrop-blur-md pointer-events-auto">
+          <div className="hidden md:flex absolute top-[62%] left-[36%] xl:left-[38%] items-center gap-2 hud-badge px-2.5 py-1.5 border-cyan-400/25">
             <span className="text-xs">☁️</span>
             <div>
               <div className="text-[7px] font-mono text-zinc-400 uppercase tracking-wider">CLOUD COVER</div>
@@ -351,17 +354,17 @@ export default function CinematicLanding({ onEnterDashboard }) {
           </div>
 
           {/* 6. PM2.5 Hotspot Tag (Southeast Asia / Bay of Bengal) */}
-          <div className="hidden md:flex absolute top-[60%] left-[55%] lg:left-[57%] flex-col text-left hud-panel px-2.5 py-1.5 border-red-500/35 bg-[#04070D]/85 backdrop-blur-md shadow-[0_0_20px_rgba(239,68,68,0.15)] pointer-events-auto">
+          <div className="hidden md:flex absolute top-[65%] left-[56%] xl:left-[57%] flex-col text-left hud-badge px-2.5 py-1.5 border-red-500/35 shadow-[0_0_20px_rgba(239,68,68,0.18)]">
             <div className="text-[7px] font-mono text-zinc-400 uppercase tracking-wider">PM2.5</div>
             <div className="text-xs font-mono font-black text-white mt-0.5 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_#ef4444]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_#ef4444] animate-pulse" />
               67 µg/m³
             </div>
           </div>
 
-          {/* 7. Vayu AI Speech Bubble (Above/next to Robot on the right) */}
-          <div className="hidden lg:flex absolute top-[20%] right-20 xl:right-28 flex-col hud-panel px-4 py-3 border-cyan-400/40 bg-[#04070D]/90 backdrop-blur-md shadow-[0_0_30px_rgba(0,240,255,0.22)] max-w-[200px] pointer-events-auto rounded-2xl">
-            <div className="flex items-center justify-between pb-1 border-b border-white/[0.08]">
+          {/* 7. Vayu AI Speech Bubble (Directly above Robot with speech tail pointer) */}
+          <div className="hidden lg:flex absolute top-[25%] right-[9%] xl:right-[11%] flex-col hud-badge px-4 py-3 border-cyan-400/40 bg-[#04070D]/90 backdrop-blur-md shadow-[0_0_30px_rgba(0,240,255,0.22)] max-w-[200px] rounded-2xl">
+            <div className="flex items-center justify-between pb-1.5 border-b border-white/[0.08]">
               <span className="text-[9px] font-mono font-bold tracking-widest text-cyan-400 uppercase">
                 VAYU AI
               </span>
@@ -372,13 +375,15 @@ export default function CinematicLanding({ onEnterDashboard }) {
                 <span className="w-0.5 h-2.5 bg-cyan-400 animate-pulse delay-100" />
               </div>
             </div>
-            <p className="text-[10px] font-sans text-zinc-200 leading-relaxed pt-1.5">
+            <p className="text-[10px] font-sans text-zinc-200 leading-relaxed pt-1.5 whitespace-normal">
               Tracking the atmosphere for a cleaner, safer tomorrow !
             </p>
+            {/* Speech bubble downward pointing triangle */}
+            <div className="absolute -bottom-2 right-12 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-cyan-400/60" />
           </div>
 
           {/* 8. Mission Status Panel (Far right edge) */}
-          <div className="hidden xl:flex absolute top-[44%] -translate-y-1/2 right-2 flex-col hud-panel px-3.5 py-3 border-cyan-400/25 bg-[#04070D]/90 backdrop-blur-md shadow-[0_0_20px_rgba(0,240,255,0.08)] pointer-events-auto min-w-[130px]">
+          <div className="hidden xl:flex absolute top-[44%] -translate-y-1/2 right-3 xl:right-5 flex-col hud-badge px-3.5 py-3 border-cyan-400/25 min-w-[130px]">
             <div className="text-[8px] font-mono font-bold tracking-widest text-cyan-400 uppercase border-b border-white/[0.08] pb-1.5 mb-2">
               MISSION STATUS
             </div>

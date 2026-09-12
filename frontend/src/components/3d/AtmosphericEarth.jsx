@@ -152,11 +152,13 @@ export default function AtmosphericEarth({
     const time = state.clock.getElapsedTime()
     const safeDelta = Math.min(delta, 0.1)
 
-    // A. Planetary Rotation (Slow continuous rotation)
+    // A. Planetary Focus (Keeps India front-facing matching reference image, with subtle organic breathing motion)
     if (surfaceRef.current) {
       if (!isDragging.current) {
-        // Natural gentle idle rotation around Y axis
-        surfaceRef.current.rotation.y += safeDelta * 0.045
+        const targetRotY = (Math.PI - 0.2) + Math.sin(time * 0.15) * 0.05
+        const targetRotX = 0.2 + Math.cos(time * 0.12) * 0.03
+        surfaceRef.current.rotation.y = THREE.MathUtils.damp(surfaceRef.current.rotation.y, targetRotY, 1.5, safeDelta)
+        surfaceRef.current.rotation.x = THREE.MathUtils.damp(surfaceRef.current.rotation.x, targetRotX, 1.5, safeDelta)
       }
     }
 

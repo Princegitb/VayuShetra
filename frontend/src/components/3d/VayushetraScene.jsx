@@ -51,8 +51,8 @@ export default function VayushetraScene({ dashboardData }) {
   // Earth = Center Hero Visual (middle of screen, extending behind UI)
   // Robot = Secondary AI Sentinel (lower-right foreground on holographic pedestal, pointing to India)
   const earthPos = isMobile ? [0, 0.4, -0.3] : [0.75, 0.08, -0.1]
-  const robotPos = isMobile ? [0, -1.2, 1.1] : [2.35, -0.46, 1.35]
-  const robotScale = isMobile ? [0.38, 0.38, 0.38] : [0.46, 0.46, 0.46]
+  const robotPos = isMobile ? [0, -1.2, 1.1] : [2.4, -0.42, 1.4]
+  const robotScale = isMobile ? [0.4, 0.4, 0.4] : [0.52, 0.52, 0.52]
 
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-auto z-0 overflow-hidden">
