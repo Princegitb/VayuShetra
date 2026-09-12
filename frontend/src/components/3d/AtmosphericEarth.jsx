@@ -21,9 +21,6 @@ export default function AtmosphericEarth({
   const earthGroupRef = useRef()
   const surfaceRef = useRef()
   const cloudsRef = useRef()
-  const orbitRef = useRef()
-  const satelliteRef = useRef()
-  const indiaBeaconRef = useRef()
   const atmosphereRef = useRef()
 
   // Drag-to-rotate state
@@ -169,32 +166,12 @@ export default function AtmosphericEarth({
       cloudsRef.current.rotation.x = Math.sin(time * 0.1) * 0.015
     }
 
-    // C. Satellite translation along polar orbit
-    if (satelliteRef.current) {
-      const t = (time * 0.08) % 1.0
-      const pos = orbitCurve.getPointAt(t)
-      satelliteRef.current.position.copy(pos)
-    }
-
-    // D. India Radar Pulse effect
-    if (indiaBeaconRef.current) {
-      const pulse = 1.0 + Math.sin(time * 4.0) * 0.25
-      indiaBeaconRef.current.scale.set(pulse, pulse, pulse)
-    }
-
-    // E. Camera / Mouse Parallax
+    // C. Camera / Mouse Parallax
     if (earthGroupRef.current) {
       const targetParallaxX = isMobile ? 0 : mousePos.x * 0.12
       const targetParallaxY = isMobile ? 0 : -mousePos.y * 0.08
       earthGroupRef.current.rotation.x = THREE.MathUtils.damp(earthGroupRef.current.rotation.x, targetParallaxY, 2.0, safeDelta)
       earthGroupRef.current.rotation.z = THREE.MathUtils.damp(earthGroupRef.current.rotation.z, -targetParallaxX * 0.5, 2.0, safeDelta)
-
-      // Report India world position for the Data Conduit connecting to the robot
-      if (onIndiaWorldPos && surfaceRef.current) {
-        const worldPos = indiaLocalPos.clone()
-        worldPos.applyMatrix4(surfaceRef.current.matrixWorld)
-        onIndiaWorldPos(worldPos)
-      }
     }
   })
 
@@ -353,32 +330,6 @@ export default function AtmosphericEarth({
         <sphereGeometry args={[radius * 1.15, 48, 48]} />
         <primitive object={atmosphereMaterial} attach="material" />
       </mesh>
-
-      {/* 4. Sentinel-5P Polar Orbit Trajectory Track */}
-      <group ref={orbitRef} rotation={[0.3, 0.4, -0.2]}>
-        {/* Orbital Elliptical Line */}
-        <primitive object={new THREE.Line(orbitLineGeo, new THREE.LineBasicMaterial({ color: '#00f0ff', transparent: true, opacity: 0.35 }))} />
-
-        {/* Sentinel-5P Satellite Vehicle */}
-        <group ref={satelliteRef}>
-          {/* Satellite Core Box */}
-          <mesh>
-            <boxGeometry args={[0.04, 0.024, 0.03]} />
-            <meshStandardMaterial color="#f0f9ff" metalness={0.9} roughness={0.2} emissive="#00f0ff" emissiveIntensity={0.6} />
-          </mesh>
-          {/* Solar Array Wings */}
-          <mesh position={[0.04, 0, 0]}>
-            <boxGeometry args={[0.04, 0.015, 0.002]} />
-            <meshBasicMaterial color="#0284c7" />
-          </mesh>
-          <mesh position={[-0.04, 0, 0]}>
-            <boxGeometry args={[0.04, 0.015, 0.002]} />
-            <meshBasicMaterial color="#0284c7" />
-          </mesh>
-          {/* Sensor Scan Flare */}
-          <pointLight color="#00f0ff" intensity={1.5} distance={1.2} />
-        </group>
-      </group>
     </group>
   )
 }

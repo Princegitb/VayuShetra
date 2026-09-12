@@ -24,7 +24,6 @@ function CameraRig({ mousePos, isMobile }) {
 export default function VayushetraScene({ dashboardData }) {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [isMobile, setIsMobile] = useState(false)
-  const [indiaWorldPos, setIndiaWorldPos] = useState([2.2, 0.6, 1.1])
 
   // Detect mobile & track normalized mouse position [-1, 1]
   useEffect(() => {
@@ -107,7 +106,6 @@ export default function VayushetraScene({ dashboardData }) {
               radius={1.55}
               mousePos={mousePos}
               isMobile={isMobile}
-              onIndiaWorldPos={(pos) => setIndiaWorldPos([pos.x, pos.y, pos.z])}
             />
           </React.Suspense>
         </group>
@@ -127,8 +125,8 @@ export default function VayushetraScene({ dashboardData }) {
            ==================================================================== */}
         {!isMobile && (
           <DataConduit
-            startPos={indiaWorldPos}
-            endPos={[robotPos[0] - 0.08, robotPos[1] + 0.18, robotPos[2]]}
+            startPos={[earthPos[0] + 0.32, earthPos[1] + 0.38, 0.25]}
+            endPos={[robotPos[0] - 0.15, robotPos[1] + 0.25, robotPos[2]]}
           />
         )}
 
