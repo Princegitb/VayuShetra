@@ -87,7 +87,11 @@ export default function Robot({ mousePos = { x: 0, y: 0 }, isMobile = false }) {
       spine: clonedFbx.getObjectByName('spina'),
       pelvis: clonedFbx.getObjectByName('Taz'),
       leftArm: clonedFbx.getObjectByName('ruka1L'),
+      leftForearm: clonedFbx.getObjectByName('ruka2L'),
+      leftHand: clonedFbx.getObjectByName('ruka3L') || clonedFbx.getObjectByName('kistL'),
       rightArm: clonedFbx.getObjectByName('ruka1R'),
+      rightForearm: clonedFbx.getObjectByName('ruka2R'),
+      rightHand: clonedFbx.getObjectByName('ruka3R') || clonedFbx.getObjectByName('kistR'),
       leftEar: clonedFbx.getObjectByName('uhoL'),
       rightEar: clonedFbx.getObjectByName('uhoR'),
     }
@@ -153,17 +157,29 @@ export default function Robot({ mousePos = { x: 0, y: 0 }, isMobile = false }) {
       bones.rightEar.rotation.z = THREE.MathUtils.damp(bones.rightEar.rotation.z, earTwitch, 4.0, safeDelta)
     }
 
-    // F. Right Arm: Pointing directly towards Earth & India (matches user reference image!)
+    // F. Articulated Dual-Arm Gesture: BOTH hands clearly visible in front, pointing directly towards Earth!
     if (bones.rightArm) {
-      const pointX = 1.35 + Math.sin(time * 1.2) * 0.04
-      const pointZ = -0.72 + Math.cos(time * 1.0) * 0.03
-      bones.rightArm.rotation.x = THREE.MathUtils.damp(bones.rightArm.rotation.x, pointX, 2.5, safeDelta)
-      bones.rightArm.rotation.z = THREE.MathUtils.damp(bones.rightArm.rotation.z, pointZ, 2.5, safeDelta)
-      bones.rightArm.rotation.y = -0.32
+      // Screen-left arm extends horizontally pointing straight towards Earth
+      const pointRX = 1.18 + Math.sin(time * 1.0) * 0.03
+      const pointRZ = -0.98 + Math.cos(time * 1.2) * 0.03
+      bones.rightArm.rotation.x = THREE.MathUtils.damp(bones.rightArm.rotation.x, pointRX, 2.5, safeDelta)
+      bones.rightArm.rotation.z = THREE.MathUtils.damp(bones.rightArm.rotation.z, pointRZ, 2.5, safeDelta)
+      bones.rightArm.rotation.y = THREE.MathUtils.damp(bones.rightArm.rotation.y, -0.35, 2.5, safeDelta)
     }
+    if (bones.rightForearm) {
+      bones.rightForearm.rotation.x = THREE.MathUtils.damp(bones.rightForearm.rotation.x, 0.25, 2.5, safeDelta)
+    }
+
     if (bones.leftArm) {
-      bones.leftArm.rotation.x = -2.65 + Math.sin(time * 1.5) * 0.03
-      bones.leftArm.rotation.z = 0.22
+      // Screen-right arm raised forward in front of chest/body, hand clearly visible to user
+      const pointLX = 1.12 + Math.sin(time * 1.2) * 0.04
+      const pointLZ = 0.55 + Math.cos(time * 1.0) * 0.03
+      bones.leftArm.rotation.x = THREE.MathUtils.damp(bones.leftArm.rotation.x, pointLX, 2.5, safeDelta)
+      bones.leftArm.rotation.z = THREE.MathUtils.damp(bones.leftArm.rotation.z, pointLZ, 2.5, safeDelta)
+      bones.leftArm.rotation.y = THREE.MathUtils.damp(bones.leftArm.rotation.y, 0.28, 2.5, safeDelta)
+    }
+    if (bones.leftForearm) {
+      bones.leftForearm.rotation.y = THREE.MathUtils.damp(bones.leftForearm.rotation.y, -0.25, 2.5, safeDelta)
     }
 
     // G. Subtle organic eye/chest sensor pulse

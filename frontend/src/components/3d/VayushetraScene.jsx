@@ -50,9 +50,9 @@ export default function VayushetraScene({ dashboardData }) {
   // Position calculations matching user reference image composition:
   // Earth = Center Hero Visual (middle of screen, extending behind UI)
   // Robot = Secondary AI Sentinel (lower-right foreground on holographic pedestal, pointing to India)
-  const earthPos = isMobile ? [0, 0.4, -0.3] : [0.75, 0.08, -0.1]
-  const robotPos = isMobile ? [0, -1.2, 1.1] : [2.4, -0.42, 1.4]
-  const robotScale = isMobile ? [0.4, 0.4, 0.4] : [0.52, 0.52, 0.52]
+  const earthPos = isMobile ? [0, 0.4, -0.3] : [1.15, 0.05, -0.15]
+  const robotPos = isMobile ? [0, -1.2, 1.1] : [2.25, -0.45, 1.35]
+  const robotScale = isMobile ? [0.38, 0.38, 0.38] : [0.46, 0.46, 0.46]
 
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-auto z-0 overflow-hidden">
@@ -93,17 +93,17 @@ export default function VayushetraScene({ dashboardData }) {
         <CameraRig mousePos={mousePos} isMobile={isMobile} />
 
         {/* ====================================================================
-            1. PRIMARY HERO VISUAL: 3D PHOTOREALISTIC ATMOSPHERIC EARTH (45-50% Viewport)
+            1. PRIMARY HERO VISUAL: 3D PHOTOREALISTIC ATMOSPHERIC EARTH (Right-shifted)
            ==================================================================== */}
         <group position={earthPos}>
           <React.Suspense fallback={
             <mesh>
-              <sphereGeometry args={[1.55, 32, 32]} />
+              <sphereGeometry args={[1.32, 32, 32]} />
               <meshBasicMaterial color="#00f0ff" wireframe transparent opacity={0.2} />
             </mesh>
           }>
             <AtmosphericEarth
-              radius={1.55}
+              radius={1.32}
               mousePos={mousePos}
               isMobile={isMobile}
             />

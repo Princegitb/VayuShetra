@@ -206,11 +206,11 @@ export default function CinematicLanding({ onEnterDashboard }) {
         <div className="absolute inset-0 bg-radial-gradient pointer-events-none z-0 opacity-80" />
         <div className="absolute inset-0 sci-grid-bg pointer-events-none opacity-40 z-0" />
 
-        {/* Main Hero Layer: Left Text + Floating Aerospace HUD Elements */}
-        <div className="relative z-10 max-w-7xl mx-auto w-full pt-8 sm:pt-12 pointer-events-auto">
+        {/* Main Hero Layer: Left Text Docked to Far-Left Screen Edge */}
+        <div className="relative z-10 w-full pl-6 sm:pl-10 lg:pl-14 xl:pl-16 pt-4 sm:pt-6 pointer-events-auto flex justify-start">
           
           {/* Left Column: Headline, Narrative & Actions */}
-          <div className="max-w-xl text-left space-y-4">
+          <div className="max-w-lg lg:max-w-xl text-left space-y-3.5">
             
             {/* Status Capsule */}
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#0B1016]/90 border border-cyan-400/30 text-cyan-300 text-[11px] font-mono shadow-[0_0_20px_rgba(0,240,255,0.15)] backdrop-blur-md">
@@ -221,7 +221,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
             </div>
 
             {/* Main Cinematic Title */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-black font-display tracking-tight text-white uppercase leading-[1.06]">
+            <h1 className="text-4xl sm:text-5xl lg:text-[3.2rem] font-black font-display tracking-tight text-white uppercase leading-[1.06]">
               ATMOSPHERIC
               <br />
               INTELLIGENCE.
@@ -232,7 +232,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
             </h1>
 
             {/* Subtitle Description */}
-            <p className="max-w-lg text-xs sm:text-sm text-zinc-400 font-medium leading-relaxed">
+            <p className="max-w-md sm:max-w-lg text-xs sm:text-sm text-zinc-400 font-medium leading-relaxed">
               High-resolution Sentinel-5P TROPOMI trace gas retrievals, ERA5 nocturnal boundary layer inversion modeling, and chemical mass balance AI. Pinpointing transboundary smoke advection across the Indo-Gangetic Basin.
             </p>
 
@@ -279,12 +279,12 @@ export default function CinematicLanding({ onEnterDashboard }) {
         </div>
 
         {/* ====================================================================
-            FLOATING AEROSPACE HUD OVERLAYS (MATCHING USER REFERENCE IMAGE 2)
+            FLOATING AEROSPACE HUD OVERLAYS (AROUND SHIFTED EARTH & ROBOT)
            ==================================================================== */}
         <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden select-none">
           
           {/* 1. Sentinel-5P Satellite Tag (Top-left above Earth) */}
-          <div className="hidden md:flex absolute top-[18%] left-[38%] xl:left-[39%] flex-col text-left hud-badge px-2.5 py-1.5 border-cyan-400/35">
+          <div className="hidden md:flex absolute top-[16%] left-[45%] xl:left-[47%] flex-col text-left hud-badge px-2.5 py-1.5 border-cyan-400/35">
             <div className="text-[8px] font-mono font-bold text-cyan-400 tracking-wider uppercase">
               SENTINEL-5P
             </div>
@@ -292,7 +292,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
           </div>
 
           {/* 2. Atmospheric Layers Card (Top-right of Earth) */}
-          <div className="hidden lg:flex absolute top-[12%] right-[29%] xl:right-[31%] flex-col hud-badge px-3 py-2 border-cyan-400/25 min-w-[125px]">
+          <div className="hidden lg:flex absolute top-[12%] right-[22%] xl:right-[24%] flex-col hud-badge px-3 py-2 border-cyan-400/25 min-w-[125px]">
             <div className="text-[8px] font-mono font-bold tracking-widest text-cyan-400 uppercase border-b border-white/[0.08] pb-1 mb-1.5">
               ATMOSPHERIC LAYERS
             </div>
@@ -321,7 +321,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
           </div>
 
           {/* 3. Wind Flow Tag (Upper right of Earth) */}
-          <div className="hidden md:flex absolute top-[34%] right-[33%] xl:right-[35%] flex-col text-left hud-badge px-3 py-1.5 border-cyan-400/35">
+          <div className="hidden md:flex absolute top-[30%] right-[26%] xl:right-[28%] flex-col text-left hud-badge px-3 py-1.5 border-cyan-400/35">
             <div className="text-[8px] font-mono font-bold text-cyan-400 tracking-wider uppercase">
               WIND FLOW
             </div>
@@ -332,7 +332,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
           </div>
 
           {/* 4. India Atmospheric Beacon Tag (Center of Earth, above golden pin) */}
-          <div className="hidden md:flex absolute top-[44%] left-[49%] xl:left-[50%] flex-col text-left hud-badge px-3 py-2 border-yellow-400/40 shadow-[0_0_20px_rgba(250,204,21,0.18)]">
+          <div className="hidden md:flex absolute top-[44%] left-[58%] xl:left-[60%] flex-col text-left hud-badge px-3 py-2 border-yellow-400/40 shadow-[0_0_20px_rgba(250,204,21,0.18)]">
             <div className="text-[8px] font-mono font-bold text-zinc-400 uppercase">
               INDIA
             </div>
@@ -345,7 +345,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
           </div>
 
           {/* 5. Cloud Cover Tag (West of India / Arabian Sea) */}
-          <div className="hidden md:flex absolute top-[62%] left-[36%] xl:left-[38%] items-center gap-2 hud-badge px-2.5 py-1.5 border-cyan-400/25">
+          <div className="hidden md:flex absolute top-[62%] left-[46%] xl:left-[48%] items-center gap-2 hud-badge px-2.5 py-1.5 border-cyan-400/25">
             <span className="text-xs">☁️</span>
             <div>
               <div className="text-[7px] font-mono text-zinc-400 uppercase tracking-wider">CLOUD COVER</div>
@@ -354,7 +354,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
           </div>
 
           {/* 6. PM2.5 Hotspot Tag (Southeast Asia / Bay of Bengal) */}
-          <div className="hidden md:flex absolute top-[65%] left-[56%] xl:left-[57%] flex-col text-left hud-badge px-2.5 py-1.5 border-red-500/35 shadow-[0_0_20px_rgba(239,68,68,0.18)]">
+          <div className="hidden md:flex absolute top-[65%] left-[65%] xl:left-[67%] flex-col text-left hud-badge px-2.5 py-1.5 border-red-500/35 shadow-[0_0_20px_rgba(239,68,68,0.18)]">
             <div className="text-[7px] font-mono text-zinc-400 uppercase tracking-wider">PM2.5</div>
             <div className="text-xs font-mono font-black text-white mt-0.5 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_#ef4444] animate-pulse" />
@@ -363,7 +363,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
           </div>
 
           {/* 7. Vayu AI Speech Bubble (Directly above Robot with speech tail pointer) */}
-          <div className="hidden lg:flex absolute top-[25%] right-[9%] xl:right-[11%] flex-col hud-badge px-4 py-3 border-cyan-400/40 bg-[#04070D]/90 backdrop-blur-md shadow-[0_0_30px_rgba(0,240,255,0.22)] max-w-[200px] rounded-2xl">
+          <div className="hidden lg:flex absolute top-[24%] right-[7%] xl:right-[8%] flex-col hud-badge px-4 py-3 border-cyan-400/40 bg-[#04070D]/90 backdrop-blur-md shadow-[0_0_30px_rgba(0,240,255,0.22)] max-w-[200px] rounded-2xl">
             <div className="flex items-center justify-between pb-1.5 border-b border-white/[0.08]">
               <span className="text-[9px] font-mono font-bold tracking-widest text-cyan-400 uppercase">
                 VAYU AI
@@ -382,41 +382,12 @@ export default function CinematicLanding({ onEnterDashboard }) {
             <div className="absolute -bottom-2 right-12 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-cyan-400/60" />
           </div>
 
-          {/* 8. Mission Status Panel (Far right edge) */}
-          <div className="hidden xl:flex absolute top-[44%] -translate-y-1/2 right-3 xl:right-5 flex-col hud-badge px-3.5 py-3 border-cyan-400/25 min-w-[130px]">
-            <div className="text-[8px] font-mono font-bold tracking-widest text-cyan-400 uppercase border-b border-white/[0.08] pb-1.5 mb-2">
-              MISSION STATUS
-            </div>
-            <div className="space-y-1.5 text-[8px] font-mono tracking-wider text-zinc-300 uppercase">
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" />
-                <span>SATELLITE LINK</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" />
-                <span>DATA STREAM</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" />
-                <span>AI MODELS</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" />
-                <span>SYSTEMS</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" />
-                <span>OPERATIONAL</span>
-              </div>
-            </div>
-          </div>
-
         </div>
 
         {/* ====================================================================
-            BOTTOM SECTION: 4 TELEMETRY CARDS + SCROLL INDICATOR (EXACT REFERENCE!)
+            BOTTOM SECTION: 4 TELEMETRY CARDS + SCROLL INDICATOR (DOCKED TO LEFT)
            ==================================================================== */}
-        <div className="relative z-10 max-w-7xl mx-auto w-full pt-4 pointer-events-auto space-y-3">
+        <div className="relative z-10 w-full pl-6 sm:pl-10 lg:pl-14 xl:pl-16 pr-6 pt-3 pointer-events-auto space-y-2.5">
           
           {/* Row of 4 Telemetry Cards with Mini-Bar Histograms */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl">
