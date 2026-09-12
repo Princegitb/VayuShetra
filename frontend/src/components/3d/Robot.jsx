@@ -157,29 +157,34 @@ export default function Robot({ mousePos = { x: 0, y: 0 }, isMobile = false }) {
       bones.rightEar.rotation.z = THREE.MathUtils.damp(bones.rightEar.rotation.z, earTwitch, 4.0, safeDelta)
     }
 
-    // F. Articulated Dual-Arm Gesture: BOTH hands clearly visible in front, pointing directly towards Earth!
+    // F. Articulated Arm Gestures: One hand outstretched pointing to Earth, One hand at rest!
     if (bones.rightArm) {
-      // Screen-left arm extends horizontally pointing straight towards Earth
-      const pointRX = 1.18 + Math.sin(time * 1.0) * 0.03
-      const pointRZ = -0.98 + Math.cos(time * 1.2) * 0.03
-      bones.rightArm.rotation.x = THREE.MathUtils.damp(bones.rightArm.rotation.x, pointRX, 2.5, safeDelta)
-      bones.rightArm.rotation.z = THREE.MathUtils.damp(bones.rightArm.rotation.z, pointRZ, 2.5, safeDelta)
-      bones.rightArm.rotation.y = THREE.MathUtils.damp(bones.rightArm.rotation.y, -0.35, 2.5, safeDelta)
+      // Screen-left arm outstretched straight pointing directly towards Earth (not folded!)
+      const targetRX = -1.54 + Math.sin(time * 0.8) * 0.02
+      const targetRZ = 1.56 + Math.cos(time * 1.0) * 0.02
+      bones.rightArm.rotation.x = THREE.MathUtils.damp(bones.rightArm.rotation.x, targetRX, 2.5, safeDelta)
+      bones.rightArm.rotation.y = THREE.MathUtils.damp(bones.rightArm.rotation.y, 0, 2.5, safeDelta)
+      bones.rightArm.rotation.z = THREE.MathUtils.damp(bones.rightArm.rotation.z, targetRZ, 2.5, safeDelta)
     }
     if (bones.rightForearm) {
-      bones.rightForearm.rotation.x = THREE.MathUtils.damp(bones.rightForearm.rotation.x, 0.25, 2.5, safeDelta)
+      // Forearm stays straight with no elbow bending (unfolded, pointing straight)
+      bones.rightForearm.rotation.x = THREE.MathUtils.damp(bones.rightForearm.rotation.x, 0, 3.0, safeDelta)
+      bones.rightForearm.rotation.y = THREE.MathUtils.damp(bones.rightForearm.rotation.y, 0, 3.0, safeDelta)
+      bones.rightForearm.rotation.z = THREE.MathUtils.damp(bones.rightForearm.rotation.z, 0, 3.0, safeDelta)
     }
 
     if (bones.leftArm) {
-      // Screen-right arm raised forward in front of chest/body, hand clearly visible to user
-      const pointLX = 1.12 + Math.sin(time * 1.2) * 0.04
-      const pointLZ = 0.55 + Math.cos(time * 1.0) * 0.03
-      bones.leftArm.rotation.x = THREE.MathUtils.damp(bones.leftArm.rotation.x, pointLX, 2.5, safeDelta)
-      bones.leftArm.rotation.z = THREE.MathUtils.damp(bones.leftArm.rotation.z, pointLZ, 2.5, safeDelta)
-      bones.leftArm.rotation.y = THREE.MathUtils.damp(bones.leftArm.rotation.y, 0.28, 2.5, safeDelta)
+      // Screen-right arm hangs naturally down by the side of the body at rest
+      const targetLZ = -3.14 + Math.sin(time * 0.9) * 0.02
+      bones.leftArm.rotation.x = THREE.MathUtils.damp(bones.leftArm.rotation.x, 0, 2.5, safeDelta)
+      bones.leftArm.rotation.y = THREE.MathUtils.damp(bones.leftArm.rotation.y, 0, 2.5, safeDelta)
+      bones.leftArm.rotation.z = THREE.MathUtils.damp(bones.leftArm.rotation.z, targetLZ, 2.5, safeDelta)
     }
     if (bones.leftForearm) {
-      bones.leftForearm.rotation.y = THREE.MathUtils.damp(bones.leftForearm.rotation.y, -0.25, 2.5, safeDelta)
+      // Forearm relaxed at rest
+      bones.leftForearm.rotation.x = THREE.MathUtils.damp(bones.leftForearm.rotation.x, 0, 3.0, safeDelta)
+      bones.leftForearm.rotation.y = THREE.MathUtils.damp(bones.leftForearm.rotation.y, 0, 3.0, safeDelta)
+      bones.leftForearm.rotation.z = THREE.MathUtils.damp(bones.leftForearm.rotation.z, 0, 3.0, safeDelta)
     }
 
     // G. Subtle organic eye/chest sensor pulse
