@@ -46,7 +46,8 @@ function ResponsiveHeroScene({ mousePos, isMobile }) {
   const robotScale = [robotScaleVal, robotScaleVal, robotScaleVal]
 
   const robotX = isCompact ? 0 : Math.min(2.35, Math.max(1.45, viewport.width * 0.41))
-  const robotY = isCompact ? -viewport.height * 0.32 : -Math.max(0.38, viewport.height * 0.18)
+  // Elevated position: raised higher so the robot and holographic base float cleanly above bottom telemetry cards
+  const robotY = isCompact ? -viewport.height * 0.18 : -Math.max(0.14, viewport.height * 0.05)
   const robotPos = [robotX, robotY, 1.3]
 
   // Dedicated light positioning for robot
@@ -95,7 +96,7 @@ function ResponsiveHeroScene({ mousePos, isMobile }) {
       {/* 2. SECONDARY AI GUIDE: 3D VAYU AI ROBOT (Auto-scales on Zoom in/out) */}
       <group position={robotPos} scale={robotScale}>
         <React.Suspense fallback={null}>
-          <Robot mousePos={mousePos} isMobile={isMobile} />
+          <Robot mousePos={mousePos} isMobile={isMobile} isHero={true} pointToEarth={!isCompact} />
         </React.Suspense>
       </group>
 

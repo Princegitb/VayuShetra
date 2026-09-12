@@ -11,7 +11,12 @@ import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js'
  * - Reactive antenna twitches and fluid levitation hovering
  * - Dynamic atmospheric ion-drive contra-rotating gyro rings beneath chassis
  */
-export default function Robot({ mousePos = { x: 0, y: 0 }, isMobile = false }) {
+export default function Robot({ 
+  mousePos = { x: 0, y: 0 }, 
+  isMobile = false,
+  isHero = true,
+  pointToEarth = true 
+}) {
   const rootRef = useRef()
   const gyro1Ref = useRef()
   const gyro2Ref = useRef()
@@ -47,10 +52,10 @@ export default function Robot({ mousePos = { x: 0, y: 0 }, isMobile = false }) {
     // Scale and center the FBX around origin based on its geometry bounds
     clone.scale.set(0.0016, 0.0016, 0.0016)
     clone.position.set(0, -1.18, 0)
-    // Orient completely front-facing towards the user & camera (0 degree deviation)
-    clone.rotation.y = -Math.PI / 2
+    // Orient completely towards the user & screen (compensating for right-screen placement in hero)
+    clone.rotation.y = isHero ? -Math.PI / 2 - 0.26 : -Math.PI / 2
     return clone
-  }, [fbx])
+  }, [fbx, isHero])
 
   // 4. Create high-fidelity PBR material with emissive glow
   const pbrMaterial = useMemo(() => {
@@ -117,7 +122,8 @@ export default function Robot({ mousePos = { x: 0, y: 0 }, isMobile = false }) {
       rootRef.current.position.y = Math.sin(time * 1.6) * 0.07
       
       // Responsive torso tilt towards cursor
-      const bodyYaw = THREE.MathUtils.clamp(targetX * 0.18, -0.22, 0.22)
+      const bodyBaseYaw = isHero ? -0.06 : 0
+      const bodyYaw = THREE.MathUtils.clamp(targetX * 0.16 + bodyBaseYaw, -0.25, 0.20)
       const bodyPitch = THREE.MathUtils.clamp(-targetY * 0.14, -0.16, 0.16)
 
       rootRef.current.rotation.y = THREE.MathUtils.damp(rootRef.current.rotation.y, bodyYaw, 2.5, safeDelta)
@@ -126,11 +132,14 @@ export default function Robot({ mousePos = { x: 0, y: 0 }, isMobile = false }) {
     }
 
     // C. Skeletal Head Tracking: UP / DOWN and LEFT / RIGHT with cursor!
+    // Stares directly into the user's screen with responsive parallax tracking
     if (bones.head) {
-      // Yaw: turns face left/right with cursor X
-      const headYaw = THREE.MathUtils.clamp(targetX * 0.58, -0.65, 0.65)
-      // Pitch: tilts face up/down with cursor Y (negative targetY nods UP towards high cursor)
-      const headPitch = THREE.MathUtils.clamp(-targetY * 0.52, -0.55, 0.55)
+      // Yaw: turns face directly towards the screen / user, tracking cursor
+      const headBaseYaw = isHero ? -0.16 : 0
+      const headYaw = THREE.MathUtils.clamp(targetX * 0.52 + headBaseYaw, -0.68, 0.42)
+      // Pitch: tilts face up/down with cursor Y (slight upward gaze towards user eye-level)
+      const headBasePitch = isHero ? -0.05 : 0
+      const headPitch = THREE.MathUtils.clamp(-targetY * 0.50 + headBasePitch, -0.52, 0.50)
       // Roll: subtle curious sideways head tilt
       const headRoll = THREE.MathUtils.clamp(-targetX * 0.12, -0.15, 0.15)
 
@@ -141,8 +150,9 @@ export default function Robot({ mousePos = { x: 0, y: 0 }, isMobile = false }) {
 
     // D. Spine responsive lean (gives natural fluid spine curvature)
     if (bones.spine) {
-      const spineYaw = THREE.MathUtils.clamp(targetX * 0.18, -0.2, 0.2)
-      const spinePitch = THREE.MathUtils.clamp(-targetY * 0.15, -0.18, 0.18)
+      const spineBaseYaw = isHero ? -0.04 : 0
+      const spineYaw = THREE.MathUtils.clamp(targetX * 0.16 + spineBaseYaw, -0.22, 0.18)
+      const spinePitch = THREE.MathUtils.clamp(-targetY * 0.14, -0.18, 0.18)
       bones.spine.rotation.y = THREE.MathUtils.damp(bones.spine.rotation.y, spineYaw, 2.8, safeDelta)
       bones.spine.rotation.x = THREE.MathUtils.damp(bones.spine.rotation.x, spinePitch, 2.8, safeDelta)
     }
@@ -159,12 +169,19 @@ export default function Robot({ mousePos = { x: 0, y: 0 }, isMobile = false }) {
 
     // F. Articulated Arm Gestures: One hand outstretched pointing to Earth, One hand at rest!
     if (bones.rightArm) {
-      // Screen-left arm outstretched straight pointing directly towards Earth (not folded!)
-      const targetRX = -1.54 + Math.sin(time * 0.8) * 0.02
-      const targetRZ = 1.56 + Math.cos(time * 1.0) * 0.02
-      bones.rightArm.rotation.x = THREE.MathUtils.damp(bones.rightArm.rotation.x, targetRX, 2.5, safeDelta)
-      bones.rightArm.rotation.y = THREE.MathUtils.damp(bones.rightArm.rotation.y, 0, 2.5, safeDelta)
-      bones.rightArm.rotation.z = THREE.MathUtils.damp(bones.rightArm.rotation.z, targetRZ, 2.5, safeDelta)
+      if (pointToEarth) {
+        // Screen-left arm outstretched straight pointing directly towards Earth (not folded!)
+        const targetRX = -1.54 + Math.sin(time * 0.8) * 0.02
+        const targetRZ = 1.56 + Math.cos(time * 1.0) * 0.02
+        bones.rightArm.rotation.x = THREE.MathUtils.damp(bones.rightArm.rotation.x, targetRX, 2.5, safeDelta)
+        bones.rightArm.rotation.y = THREE.MathUtils.damp(bones.rightArm.rotation.y, 0, 2.5, safeDelta)
+        bones.rightArm.rotation.z = THREE.MathUtils.damp(bones.rightArm.rotation.z, targetRZ, 2.5, safeDelta)
+      } else {
+        // Hanging relaxed at side
+        bones.rightArm.rotation.x = THREE.MathUtils.damp(bones.rightArm.rotation.x, 0, 2.5, safeDelta)
+        bones.rightArm.rotation.y = THREE.MathUtils.damp(bones.rightArm.rotation.y, 0, 2.5, safeDelta)
+        bones.rightArm.rotation.z = THREE.MathUtils.damp(bones.rightArm.rotation.z, 3.14, 2.5, safeDelta)
+      }
     }
     if (bones.rightForearm) {
       // Forearm stays straight with no elbow bending (unfolded, pointing straight)

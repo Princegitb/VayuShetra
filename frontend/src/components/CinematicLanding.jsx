@@ -284,7 +284,7 @@ export default function CinematicLanding({ onEnterDashboard }) {
         <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden select-none">
           
           {/* Vayu AI Speech Bubble (Positioned directly over robot's head) */}
-          <div className="hidden md:flex absolute top-[22%] right-[10%] lg:right-[12%] xl:right-[13%] flex-col hud-badge px-4 py-3 border-cyan-400/40 bg-[#04070D]/90 backdrop-blur-md shadow-[0_0_30px_rgba(0,240,255,0.22)] max-w-[200px] rounded-2xl pointer-events-auto">
+          <div className="hidden md:flex absolute top-[13%] lg:top-[14%] right-[10%] lg:right-[12%] xl:right-[13%] flex-col hud-badge px-4 py-3 border-cyan-400/40 bg-[#04070D]/90 backdrop-blur-md shadow-[0_0_30px_rgba(0,240,255,0.22)] max-w-[200px] rounded-2xl pointer-events-auto">
             <div className="flex items-center justify-between pb-1.5 border-b border-white/[0.08]">
               <span className="text-[9px] font-mono font-bold tracking-widest text-cyan-400 uppercase">
                 VAYU AI
